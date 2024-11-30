@@ -21,6 +21,22 @@ window.addEventListener('load', () => {
   chessboard.style.gridTemplateColumns = `repeat(8, ${windowWidth * 0.8 / 8}px)`;
 });
 
+let possibleMoves = [];
+
+document.body.addEventListener('click', (e) => {
+  if (e.target === document.body) {
+    // Clear highlights and selection
+    highlightMoves([]);
+    document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
+      selectedPiece.classList.remove('selected');
+    });
+    selectedPiece = null;
+    selectedSquare = null;
+
+    possibleMoves = [];
+  }
+});
+
 const board = document.getElementById('chessboard');
 
 let currentTurn = 'white'; // 'white' begins the game
