@@ -1,6 +1,6 @@
 const board = document.getElementById('chessboard');
 
-let currentTurn = 'white'; // 'white' starts the game
+let currentTurn = 'white'; // 'white' begins the game
 
 const boardState = Array(8)
   .fill(null)
