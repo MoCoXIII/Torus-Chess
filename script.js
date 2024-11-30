@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.11.30.23.x';
+document.getElementById('version').textContent = 'Version 0.2024.11.30.23.20.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -416,6 +416,7 @@ const handlePieceClick = (e) => {
     }
   }
 };
+
 const canKingBeAttacked = (kingRow, kingCol, opponentColor) => {
   for (let row = 0; row < 8; row++) {
     for (let col = 0; col < 8; col++) {
@@ -442,23 +443,16 @@ const currentKingPosition = () => {
   }
   return null;
 };
+
 const enablePieceSelection = () => {
-  const pieces = document.querySelectorAll('.piece');
   const squares = document.querySelectorAll('.square');
   squares.forEach(square => {
     square.style.backgroundColor = '';
   })
+  
+  const pieces = document.querySelectorAll('.piece');
   pieces.forEach(piece => {
     if (piece.textContent !== null) {
-      const [kingRow, kingCol] = currentKingPosition();
-      const opponentColor = currentTurn === 'white' ? 'black' : 'white';
-      if (kingRow !== null) {
-        if (canKingBeAttacked(kingRow, kingCol, opponentColor)) {
-          const kingSquare = document.querySelector(`.square[data-row="${kingRow}"][data-col="${kingCol}"]`);
-          kingSquare.style.backgroundColor = 'red';
-        }
-      }
-
       if ((currentTurn === 'white' && boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)].toUpperCase() === boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)]) ||
         (currentTurn === 'black' && boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)].toLowerCase() === boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)])) {
         piece.removeEventListener('click', handlePieceClick);
@@ -468,6 +462,16 @@ const enablePieceSelection = () => {
       }
     }
   });
+
+  // const currentKingPosition = currentKingPosition();
+  const [kingRow, kingCol] = currentKingPosition() || [null, null];
+  const opponentColor = currentTurn === 'white' ? 'black' : 'white';
+  if (kingRow !== null) {
+    if (canKingBeAttacked(kingRow, kingCol, opponentColor)) {
+      const kingSquare = document.querySelector(`.square[data-row="${kingRow}"][data-col="${kingCol}"]`);
+      kingSquare.style.backgroundColor = 'red';
+    }
+  }
 };
 
 
