@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.11.30.15.x';
+document.getElementById('version').textContent = 'Version 0.2024.11.30.16.30.x';
 
 const board = document.getElementById('chessboard');
 
@@ -9,10 +9,12 @@ const boardState = Array(8)
   .map(() => Array(8).fill(null));
 
 const initialPieces = {
-  0: ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'], // Black major pieces
-  1: ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'], // Black pawns
-  6: ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'], // White pawns
-  7: ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'], // White major pieces
+  0: ['p', 'b', 'p', '', '', 'p', 'b', 'p'], // Black major pieces
+  1: ['q', 'r', '', '', '', '', 'r', 'k'],
+  2: ['p', 'p', '', 'n', 'n', '', 'p', 'p'], // Black pawns
+  5: ['P', 'P', '', 'N', 'N', '', 'P', 'P'], // White major pieces
+  6: ['Q', 'R', '', '', '', '', 'R', 'K'], // White pawns
+  7: ['P', 'B', 'P', '', '', 'P', 'B', 'P'], // White major pieces
 };
 
 // Initialize board state
