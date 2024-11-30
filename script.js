@@ -1,3 +1,5 @@
+document.getElementById('version').textContent = 'Version 0.2024.11.30.15.x';
+
 const board = document.getElementById('chessboard');
 
 let currentTurn = 'white'; // 'white' begins the game
@@ -153,7 +155,28 @@ const getPossibleMoves = (piece, fromRow, fromCol) => {
     if (target && piece.toLowerCase() === piece && target.toLowerCase() === target) continue;
 
     moves.push([newRow, newCol]);
-    // if (pieceType === 'p' || pieceType === 'P') break; // Stop after one step for pawns
+
+    // Continue moving in the same direction
+
+    while (true) {
+      newRow = (newRow + dRow + 8) % 8;
+      newCol = (newCol + dCol + 8) % 8;
+      const newTarget = boardState[newRow][newCol];
+
+      if (newTarget) {
+        if ((piece.toUpperCase() === piece && newTarget.toUpperCase() === newTarget) || (piece.toLowerCase() === piece && newTarget.toLowerCase() === newTarget)) {
+          break;
+        } else {
+          moves.push([newRow, newCol]);
+          break;
+        };
+      }
+
+      moves.push([newRow, newCol]);
+      if (pieceType === 'k' || pieceType === 'n') {
+        break;
+      }
+    }
   }
 
   return moves;
