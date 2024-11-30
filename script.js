@@ -415,11 +415,49 @@ const handlePieceClick = (e) => {
     }
   }
 };
+const canKingBeAttacked = (kingRow, kingCol, opponentColor) => {
+  for (let row = 0; row < 8; row++) {
+    for (let col = 0; col < 8; col++) {
+      const piece = boardState[row][col];
+      if (piece && ((opponentColor === 'white' && piece === piece.toUpperCase()) || (opponentColor === 'black' && piece === piece.toLowerCase()))) {
+        const possibleMoves = getPossibleMoves(piece, row, col);
+        if (possibleMoves.some(([moveRow, moveCol]) => moveRow === kingRow && moveCol === kingCol)) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+};
 
+const currentKingPosition = () => {
+  for (let row = 0; row < 8; row++) {
+    for (let col = 0; col < 8; col++) {
+      const piece = boardState[row][col];
+      if (piece && ((currentTurn === 'white' && piece === 'K') || (currentTurn === 'black' && piece === 'k'))) {
+        return [row, col];
+      }
+    }
+  }
+  return null;
+};
 const enablePieceSelection = () => {
   const pieces = document.querySelectorAll('.piece');
+  const squares = document.querySelectorAll('.square');
+  squares.forEach(square => {
+    square.style.backgroundColor = '';
+  })
   pieces.forEach(piece => {
     if (piece.textContent !== null) {
+      const [kingRow, kingCol] = currentKingPosition();
+      const opponentColor = currentTurn === 'white' ? 'black' : 'white';
+      if (kingRow !== null) {
+        if (canKingBeAttacked(kingRow, kingCol, opponentColor)) {
+          const kingSquare = document.querySelector(`.square[data-row="${kingRow}"][data-col="${kingCol}"]`);
+          kingSquare.style.backgroundColor = 'red';
+        }
+      }
+
       if ((currentTurn === 'white' && boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)].toUpperCase() === boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)]) ||
         (currentTurn === 'black' && boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)].toLowerCase() === boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)])) {
         piece.removeEventListener('click', handlePieceClick);
