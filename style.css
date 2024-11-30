@@ -33,3 +33,7 @@ body {
   line-height: 60px;
   cursor: pointer;
 }
+
+.square.highlight {
+  background-color: yellow;
+}
