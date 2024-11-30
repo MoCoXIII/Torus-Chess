@@ -37,3 +37,37 @@ body {
 .square.highlight {
   background-color: yellow;
 }
+
+.board {
+  user-select: none;
+}
+
+.piece {
+  user-select: none;
+  cursor: pointer;
+  /* Optional: Makes it clear the piece is clickable */
+}
+
+.piece {
+  -webkit-user-drag: none;
+  /* Disables dragging in WebKit browsers */
+  -moz-user-drag: none;
+  /* Disables dragging in Firefox */
+  user-drag: none;
+  /* Disables dragging in other browsers */
+}
+
+#turn-indicator {
+  margin: 10px 0;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.piece.selected {
+  background-color: orange;
+  border-radius: 50%;
+  /* Optional: Adds a circular highlight effect */
+  box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+  /* Optional: Adds a glow effect */
+}
