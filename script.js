@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.11.30.16.30.x';
+document.getElementById('version').textContent = 'Version 0.2024.11.30.20.30.x';
 
 window.addEventListener('load', () => {
   const windowWidth = window.innerWidth;
@@ -89,9 +89,13 @@ const getPossibleMoves = (piece, fromRow, fromCol) => {
     const direction = isWhite ? -1 : 1; // White moves up, Black moves down
     const startRow = isWhite ? 6 : 1; // Starting row for pawns
 
+    let fr_d = (fromRow + direction) % 8;
+    let fc_1 = (fromCol - 1) % 8;
+    let fc_2 = (fromCol + 1) % 8;
+
     // Regular move
-    if (!boardState[fromRow + direction][fromCol]) {
-      moves.push([fromRow + direction, fromCol]);
+    if (!boardState[fr_d][fromCol]) {
+      moves.push([fr_d, fromCol]);
 
       // Double move from start position
       if (fromRow === startRow && !boardState[fromRow + 2 * direction][fromCol]) {
@@ -101,19 +105,19 @@ const getPossibleMoves = (piece, fromRow, fromCol) => {
 
     // Captures (ensure it's an opponent's piece)
     if (
-      boardState[fromRow + direction][fromCol - 1] && // Piece to the left
-      (boardState[fromRow + direction][fromCol - 1] !== null &&
-        ((boardState[fromRow + direction][fromCol - 1].toUpperCase() === boardState[fromRow + direction][fromCol - 1]) !== isWhite))
+      boardState[fr_d][fc_1] && // Piece to the left
+      (boardState[fr_d][fc_1] !== null &&
+        ((boardState[fr_d][fc_1].toUpperCase() === boardState[fr_d][fc_1]) !== isWhite))
     ) {
-      moves.push([fromRow + direction, fromCol - 1]);
+      moves.push([fr_d, fc_1]);
     }
 
     if (
-      boardState[fromRow + direction][fromCol + 1] && // Piece to the right
-      (boardState[fromRow + direction][fromCol + 1] !== null &&
-        ((boardState[fromRow + direction][fromCol + 1].toUpperCase() === boardState[fromRow + direction][fromCol + 1]) !== isWhite))
+      boardState[fr_d][fc_2] && // Piece to the right
+      (boardState[fr_d][fc_2] !== null &&
+        ((boardState[fr_d][fc_2].toUpperCase() === boardState[fr_d][fc_2]) !== isWhite))
     ) {
-      moves.push([fromRow + direction, fromCol + 1]);
+      moves.push([fr_d, fc_2]);
     }
   }
 
