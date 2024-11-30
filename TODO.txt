@@ -2,6 +2,6 @@ Pawns Taking Across Borders
 Check checking
 Piece Symbols
 Option to turn symbols
-Pawn Promotion
+NOT PLANNED // Pawn Promotion
 Checkmate detection
 Deselect Piece
