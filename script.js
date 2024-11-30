@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.11.30.20.30.x';
+document.getElementById('version').textContent = 'Version 0.2024.11.30.20.37.x';
 
 window.addEventListener('load', () => {
   const windowWidth = window.innerWidth;
