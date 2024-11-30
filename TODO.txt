@@ -1,2 +1,2 @@
-Checkmate detection
+OPTIONAL // Checkmate detection
 NOT PLANNED // Pawn Promotion
