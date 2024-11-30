@@ -146,15 +146,17 @@ const getPossibleMoves = (piece, fromRow, fromCol) => {
   if (!directions[pieceType]) return moves;
 
   for (const [dRow, dCol] of directions[pieceType]) {
-    let newRow = (fromRow + dRow + 8) % 8;
-    let newCol = (fromCol + dCol + 8) % 8;
+    // let newRow = (fromRow + dRow + 8) % 8;
+    // let newCol = (fromCol + dCol + 8) % 8;
+    let newRow = fromRow;
+    let newCol = fromCol;
 
     // Skip moves that land on pieces of the same color
     const target = boardState[newRow][newCol];
-    if (target && piece.toUpperCase() === piece && target.toUpperCase() === target) continue;
-    if (target && piece.toLowerCase() === piece && target.toLowerCase() === target) continue;
+    // if (target && piece.toUpperCase() === piece && target.toUpperCase() === target) continue;
+    // if (target && piece.toLowerCase() === piece && target.toLowerCase() === target) continue;
 
-    moves.push([newRow, newCol]);
+    // moves.push([newRow, newCol]);
 
     // Continue moving in the same direction
 
