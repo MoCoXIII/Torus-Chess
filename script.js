@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.11.30.20.37.x';
+document.getElementById('version').textContent = 'Version 0.2024.11.30.22.x';
 
 window.addEventListener('load', () => {
   const windowWidth = window.innerWidth;
@@ -22,6 +22,7 @@ window.addEventListener('load', () => {
 });
 
 let possibleMoves = [];
+const flipTextCheckbox = document.getElementById('flipTextCheckbox');
 
 document.body.addEventListener('click', (e) => {
   if (e.target === document.body) {
@@ -76,43 +77,43 @@ const createBoard = () => {
       if (boardState[row][col]) {
         const piece = document.createElement('div');
         piece.classList.add('piece');
-        
+
         let symbol;
         switch (boardState[row][col]) {
-          case 'P':
+          case 'p':
             symbol = '♟';
             break;
-          case 'B':
+          case 'b':
             symbol = '♝';
             break;
-          case 'N':
+          case 'n':
             symbol = '♞';
             break;
-          case 'R':
+          case 'r':
             symbol = '♜';
             break;
-          case 'Q':
+          case 'q':
             symbol = '♛';
             break;
-          case 'K':
+          case 'k':
             symbol = '♚';
             break;
-          case 'p':
+          case 'P':
             symbol = '♙';
             break;
-          case 'b':
+          case 'B':
             symbol = '♗';
             break;
-          case 'n':
+          case 'N':
             symbol = '♘';
             break;
-          case 'r':
+          case 'R':
             symbol = '♖';
             break;
-          case 'q':
+          case 'Q':
             symbol = '♕';
             break;
-          case 'k':
+          case 'K':
             symbol = '♔';
             break;
           default:
@@ -359,6 +360,16 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
 
         // Switch turns
         currentTurn = currentTurn === 'white' ? 'black' : 'white';
+        let pieces = document.querySelectorAll('.piece');
+        if (flipTextCheckbox.checked) {
+          pieces.forEach(piece => {
+            piece.classList.toggle('flipped-text');
+          })
+        } else {
+          pieces.forEach(piece => {
+            piece.classList.remove('flipped-text');
+          })
+        }
         updatePieceClasses();
         document.getElementById('turn-indicator').textContent =
           `${currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1)}'s Turn`;
@@ -409,7 +420,8 @@ const enablePieceSelection = () => {
   const pieces = document.querySelectorAll('.piece');
   pieces.forEach(piece => {
     if (piece.textContent !== null) {
-      if ((currentTurn === 'white') === (piece.textContent.toUpperCase() === piece.textContent)) {
+      if ((currentTurn === 'white' && boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)].toUpperCase() === boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)]) ||
+        (currentTurn === 'black' && boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)].toLowerCase() === boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)])) {
         piece.removeEventListener('click', handlePieceClick);
         piece.addEventListener('click', handlePieceClick);
       } else {
