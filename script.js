@@ -1,5 +1,26 @@
 document.getElementById('version').textContent = 'Version 0.2024.11.30.16.30.x';
 
+window.addEventListener('load', () => {
+  const windowWidth = window.innerWidth;
+  const chessboard = document.getElementById('chessboard');
+  chessboard.style.width = `${windowWidth * 0.8}px`;
+  chessboard.style.height = `${windowWidth * 0.8}px`;
+  const squares = document.querySelectorAll('.square');
+  squares.forEach(square => {
+    square.style.width = `${windowWidth * 0.8 / 8}px`;
+    square.style.height = `${windowWidth * 0.8 / 8}px`;
+  });
+  const pieces = document.querySelectorAll('.piece');
+  pieces.forEach(piece => {
+    piece.style.fontSize = `${windowWidth * 0.8 / 8 / 2}px`;
+    piece.style.lineHeight = `${windowWidth * 0.8 / 8}px`;
+    piece.style.width = `${windowWidth * 0.8 / 8}px`;
+    piece.style.height = `${windowWidth * 0.8 / 8}px`;
+  });
+  chessboard.style.gridTemplateRows = `repeat(8, ${windowWidth * 0.8 / 8}px)`;
+  chessboard.style.gridTemplateColumns = `repeat(8, ${windowWidth * 0.8 / 8}px)`;
+});
+
 const board = document.getElementById('chessboard');
 
 let currentTurn = 'white'; // 'white' begins the game

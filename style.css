@@ -12,6 +12,9 @@ body {
   grid-template-rows: repeat(8, 60px);
   margin: 20px auto;
   border: 2px solid #333;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  /* box-sizing: border-box; */
+  width: 480px;
 }
 
 .square {
@@ -31,6 +34,9 @@ body {
   user-select: none;
   font-size: 40px;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   line-height: 60px;
   /* cursor: pointer; */
 }
@@ -66,7 +72,7 @@ body {
 
 .piece.selected {
   background-color: orange;
-  border-radius: 50%;
+  /* border-radius: 50%; */
   /* Optional: Adds a circular highlight effect */
   box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
   /* Optional: Adds a glow effect */
