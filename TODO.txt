@@ -1,3 +1,6 @@
 Pawns Taking Across Borders
 Check checking
 Piece Symbols
+Option to turn symbols
+Pawn Promotion
+Checkmate detection
