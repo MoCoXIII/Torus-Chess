@@ -1,4 +1,3 @@
-Pawns Taking Across Borders
 Check checking
 Checkmate detection
 NOT PLANNED // Pawn Promotion
