@@ -76,7 +76,50 @@ const createBoard = () => {
       if (boardState[row][col]) {
         const piece = document.createElement('div');
         piece.classList.add('piece');
-        piece.textContent = boardState[row][col];
+        
+        let symbol;
+        switch (boardState[row][col]) {
+          case 'P':
+            symbol = '♟';
+            break;
+          case 'B':
+            symbol = '♝';
+            break;
+          case 'N':
+            symbol = '♞';
+            break;
+          case 'R':
+            symbol = '♜';
+            break;
+          case 'Q':
+            symbol = '♛';
+            break;
+          case 'K':
+            symbol = '♚';
+            break;
+          case 'p':
+            symbol = '♙';
+            break;
+          case 'b':
+            symbol = '♗';
+            break;
+          case 'n':
+            symbol = '♘';
+            break;
+          case 'r':
+            symbol = '♖';
+            break;
+          case 'q':
+            symbol = '♕';
+            break;
+          case 'k':
+            symbol = '♔';
+            break;
+          default:
+            symbol = boardState[row][col];
+        }
+
+        piece.textContent = symbol;
         square.appendChild(piece);
       }
 
