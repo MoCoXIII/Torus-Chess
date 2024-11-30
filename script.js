@@ -53,6 +53,8 @@ const isOpponentPiece = (targetSquare, isWhite) => {
 const getPossibleMoves = (piece, fromRow, fromCol) => {
   const moves = [];
 
+  if (!piece) return moves;
+
   // Determine if the piece is white or black
   const isWhite = piece === piece.toUpperCase();
   const opponentColor = isWhite ? 'black' : 'white';
@@ -76,7 +78,7 @@ const getPossibleMoves = (piece, fromRow, fromCol) => {
     if (
       boardState[fromRow + direction][fromCol - 1] && // Piece to the left
       (boardState[fromRow + direction][fromCol - 1] !== null &&
-        boardState[fromRow + direction][fromCol - 1].toUpperCase() !== boardState[fromRow + direction][fromCol - 1] === isWhite)
+        ((boardState[fromRow + direction][fromCol - 1].toUpperCase() === boardState[fromRow + direction][fromCol - 1]) !== isWhite))
     ) {
       moves.push([fromRow + direction, fromCol - 1]);
     }
@@ -84,7 +86,7 @@ const getPossibleMoves = (piece, fromRow, fromCol) => {
     if (
       boardState[fromRow + direction][fromCol + 1] && // Piece to the right
       (boardState[fromRow + direction][fromCol + 1] !== null &&
-        boardState[fromRow + direction][fromCol + 1].toUpperCase() !== boardState[fromRow + direction][fromCol + 1] === isWhite)
+        ((boardState[fromRow + direction][fromCol + 1].toUpperCase() === boardState[fromRow + direction][fromCol + 1]) !== isWhite))
     ) {
       moves.push([fromRow + direction, fromCol + 1]);
     }
@@ -92,8 +94,8 @@ const getPossibleMoves = (piece, fromRow, fromCol) => {
 
   // Add other piece logic (e.g., rook, knight, etc.)
   const directions = {
-    p: [[1, 0], [1, -1], [1, 1]], // Black pawn (simplified for brevity)
-    P: [[-1, 0], [-1, -1], [-1, 1]], // White pawn
+    // p: [[1, 0], [1, -1], [1, 1]], // Black pawn (simplified for brevity)
+    // P: [[-1, 0], [-1, -1], [-1, 1]], // White pawn
     r: [
       [1, 0],
       [-1, 0],
@@ -151,11 +153,23 @@ const getPossibleMoves = (piece, fromRow, fromCol) => {
     if (target && piece.toLowerCase() === piece && target.toLowerCase() === target) continue;
 
     moves.push([newRow, newCol]);
-    if (pieceType === 'p' || pieceType === 'P') break; // Stop after one step for pawns
+    // if (pieceType === 'p' || pieceType === 'P') break; // Stop after one step for pawns
   }
 
   return moves;
 };
+
+function updatePieceClasses() {
+  const pieces = document.querySelectorAll('.piece');
+  pieces.forEach((piece) => {
+    const pieceColor = piece.textContent === piece.textContent.toUpperCase() ? 'white' : 'black';
+    if (pieceColor === currentTurn) {
+      piece.classList.add('current-turn');
+    } else {
+      piece.classList.remove('current-turn');
+    }
+  });
+}
 
 const highlightMoves = (moves, fromRow, fromCol) => {
   const allSquares = document.querySelectorAll('.square');
@@ -175,18 +189,32 @@ const highlightMoves = (moves, fromRow, fromCol) => {
   });
 };
 
+let selectedPiece = null;
+
 const handleSquareClick = (e, fromRow, fromCol, toRow, toCol) => {
+  // Try to move the selected piece to the clicked square
   movePiece(fromRow, fromCol, toRow, toCol);
+  selectedPiece = null;
 };
 
 
 // Handle piece movement and torus logic
 const movePiece = (fromRow, fromCol, toRow, toCol) => {
   const piece = boardState[fromRow][fromCol];
-  const possibleMoves = getPossibleMoves(piece, fromRow, fromCol);
+  let possibleMoves;
+
+  // if (selectedPiece) {
+  possibleMoves = getPossibleMoves(piece, fromRow, fromCol);
+  // }
+  // else {
+  //   possibleMoves = getPossibleMoves(piece, fromRow, fromCol);
+  // }
+
+  console.log('Possible moves:', possibleMoves);
   const isValidMove = possibleMoves.some(
     ([row, col]) => row === toRow && col === toCol
   );
+  console.log('isValidMove:', piece, fromRow, fromCol, toRow, toCol, isValidMove);
 
   if (isValidMove) {
     // Move the piece in the board state
@@ -220,6 +248,7 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
 
         // Switch turns
         currentTurn = currentTurn === 'white' ? 'black' : 'white';
+        updatePieceClasses();
         document.getElementById('turn-indicator').textContent =
           `${currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1)}'s Turn`;
         enablePieceSelection();
@@ -230,39 +259,52 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
   }
 };
 
+const handlePieceClick = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
 
+  // Clear previous selection
+  document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
+    selectedPiece.classList.remove('selected');
+  });
 
-// Add event listeners for dragging and dropping
+  const parent = e.target.parentElement;
+  const fromRow = parseInt(parent.dataset.row);
+  const fromCol = parseInt(parent.dataset.col);
+  const piece = boardState[fromRow][fromCol];
+
+  // Check if a piece is already selected
+  if (selectedPiece !== null) {
+    // Try to move the selected piece to the clicked square
+    movePiece(fromRow, fromCol, fromRow, fromCol);
+  } else {
+    // Enforce turn-based rules
+    if ((currentTurn === 'white' && piece === piece.toUpperCase()) ||
+      (currentTurn === 'black' && piece === piece.toLowerCase())) {
+      // Mark the piece as selected
+      e.target.classList.add('selected');
+
+      // Highlight possible moves
+      const possibleMoves = getPossibleMoves(piece, fromRow, fromCol);
+      highlightMoves(possibleMoves, fromRow, fromCol);
+      selectedPiece = piece; // Set the selected piece
+    } else {
+      console.log("It's not your turn!");
+    }
+  }
+};
+
 const enablePieceSelection = () => {
   const pieces = document.querySelectorAll('.piece');
   pieces.forEach(piece => {
-    piece.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      // Clear previous selection
-      document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
-        selectedPiece.classList.remove('selected');
-      });
-
-      const parent = e.target.parentElement;
-      const fromRow = parseInt(parent.dataset.row);
-      const fromCol = parseInt(parent.dataset.col);
-      const piece = boardState[fromRow][fromCol];
-
-      // Enforce turn-based rules
-      if ((currentTurn === 'white' && piece === piece.toUpperCase()) ||
-        (currentTurn === 'black' && piece === piece.toLowerCase())) {
-        // Mark the piece as selected
-        e.target.classList.add('selected');
-
-        // Highlight possible moves
-        const possibleMoves = getPossibleMoves(piece, fromRow, fromCol);
-        highlightMoves(possibleMoves, fromRow, fromCol);
+    if (piece.textContent !== null) {
+      if ((currentTurn === 'white') === (piece.textContent.toUpperCase() === piece.textContent)) {
+        piece.removeEventListener('click', handlePieceClick);
+        piece.addEventListener('click', handlePieceClick);
       } else {
-        console.log("It's not your turn!");
+        piece.removeEventListener('click', handlePieceClick);
       }
-    });
+    }
   });
 };
 

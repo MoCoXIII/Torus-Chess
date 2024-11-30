@@ -28,25 +28,24 @@ body {
 }
 
 .piece {
+  user-select: none;
   font-size: 40px;
   text-align: center;
   line-height: 60px;
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 
 .square.highlight {
   background-color: yellow;
-  border-radius: 50%;
+  cursor: pointer;
 }
 
 .board {
   user-select: none;
 }
 
-.piece {
-  user-select: none;
+.piece.current-turn {
   cursor: pointer;
-  /* Optional: Makes it clear the piece is clickable */
 }
 
 .piece {
@@ -54,7 +53,7 @@ body {
   /* Disables dragging in WebKit browsers */
   -moz-user-drag: none;
   /* Disables dragging in Firefox */
-  user-drag: none;
+  /* user-drag: none; */
   /* Disables dragging in other browsers */
 }
 
