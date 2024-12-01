@@ -20,6 +20,7 @@ window.addEventListener('load', () => {
   });
   chessboard.style.gridTemplateRows = `repeat(8, ${windowSize * 0.8 / 8}px)`;
   chessboard.style.gridTemplateColumns = `repeat(8, ${windowSize * 0.8 / 8}px)`;
+  updatePieceClasses();
 });
 
 let possibleMoves = [];
@@ -34,7 +35,6 @@ document.body.addEventListener('click', (e) => {
     });
     selectedPiece = null;
     selectedSquare = null;
-
     possibleMoves = [];
   }
 });
@@ -275,7 +275,11 @@ const getPossibleMoves = (piece, fromRow, fromCol, boardState) => {
 function updatePieceClasses() {
   const pieces = document.querySelectorAll('.piece');
   pieces.forEach((piece) => {
-    const pieceColor = piece.textContent === piece.textContent.toUpperCase() ? 'white' : 'black';
+    const pieceColor = (
+      (
+        boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)].toUpperCase() === boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)]
+      )
+    ) ? 'white' : 'black';
     if (pieceColor === currentTurn) {
       piece.classList.add('current-turn');
     } else {
@@ -304,7 +308,7 @@ const highlightMoves = (moves, fromRow, fromCol) => {
       possibleBoard[fromRow][fromCol] = null;
       let [kingRow, kingCol] = KingPosition(possibleBoard, currentTurn) || [null, null];
       let attacked = canBeAttacked(kingRow, kingCol, currentTurn === 'white' ? 'black' : 'white', possibleBoard);
-      console.log("Piece: ", row, col, " | King: ", kingRow, kingCol, " | Attacked: ", attacked, " | King Color: ", currentTurn, " | Opponent: ", currentTurn === 'white' ? 'black' : 'white', " | Possible Board: ", possibleBoard);
+      // console.log("Piece: ", row, col, " | King: ", kingRow, kingCol, " | Attacked: ", attacked, " | King Color: ", currentTurn, " | Opponent: ", currentTurn === 'white' ? 'black' : 'white', " | Possible Board: ", possibleBoard);
       if (kingCol !== null && attacked) {
         // square.classList.add('dangerous-move');
       } else {
@@ -323,15 +327,21 @@ const handleSquareClick = (e, fromRow, fromCol, toRow, toCol) => {
   // Try to move the selected piece to the clicked square
   movePiece(fromRow, fromCol, toRow, toCol);
   selectedPiece = null;
+  // Clear highlights and selection
+  highlightMoves([]);
+  document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
+    selectedPiece.classList.remove('selected');
+  });
 };
 
 
 // Handle piece movement and torus logic
 const movePiece = (fromRow, fromCol, toRow, toCol) => {
   const piece = boardState[fromRow][fromCol];
-  let possibleMoves;
+  // let possibleMoves;
 
   // if (selectedPiece) {
+  possibleMoves = [];
   possibleMoves = getPossibleMoves(piece, fromRow, fromCol, boardState);
   // }
   // else {
@@ -401,7 +411,8 @@ const handlePieceClick = (e) => {
   e.preventDefault();
   e.stopPropagation();
 
-  // Clear previous selection
+  // Clear highlights and selection
+  // highlightMoves([]);
   document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
     selectedPiece.classList.remove('selected');
   });
@@ -429,7 +440,7 @@ const handlePieceClick = (e) => {
       if (available_moves === 0) {
         const pieces = Array.from(document.querySelectorAll('.piece'))
           .filter(piece => (currentTurn === 'white' && piece.textContent === piece.textContent.toUpperCase()) ||
-                           (currentTurn === 'black' && piece.textContent === piece.textContent.toLowerCase()));
+            (currentTurn === 'black' && piece.textContent === piece.textContent.toLowerCase()));
         pieces.forEach(piece => {
           possibleMoves = getPossibleMoves(piece, fromRow, fromCol, boardState);
           available_moves = highlightMoves(possibleMoves, fromRow, fromCol);
@@ -437,8 +448,8 @@ const handlePieceClick = (e) => {
             return;
           }
         })
-      document.title = "Checkmate!";
-      document.getElementById('title').textContent = "Checkmate!";
+        document.title = "Checkmate!";
+        document.getElementById('title').textContent = "Checkmate!";
       }
     } else {
       console.log("It's not your turn!");
