@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.12.1.15.30.x';
+document.getElementById('version').textContent = 'Version 0.2024.12.1.16.2x.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -285,6 +285,7 @@ function updatePieceClasses() {
 }
 
 const highlightMoves = (moves, fromRow, fromCol) => {
+  let available_moves = 0;
   const allSquares = document.querySelectorAll('.square');
   allSquares.forEach(square => {
     square.classList.remove('highlight');
@@ -309,9 +310,11 @@ const highlightMoves = (moves, fromRow, fromCol) => {
       } else {
         square.classList.add('highlight');
         square.addEventListener('click', (e) => handleSquareClick(e, fromRow, fromCol, row, col));
+        available_moves++;
       }
     }
   });
+  return available_moves;
 };
 
 let selectedPiece = null;
@@ -420,9 +423,23 @@ const handlePieceClick = (e) => {
       e.target.classList.add('selected');
 
       // Highlight possible moves
-      const possibleMoves = getPossibleMoves(piece, fromRow, fromCol, boardState);
-      highlightMoves(possibleMoves, fromRow, fromCol);
+      let possibleMoves = getPossibleMoves(piece, fromRow, fromCol, boardState);
       selectedPiece = piece; // Set the selected piece
+      let available_moves = highlightMoves(possibleMoves, fromRow, fromCol);
+      if (available_moves === 0) {
+        const pieces = Array.from(document.querySelectorAll('.piece'))
+          .filter(piece => (currentTurn === 'white' && piece.textContent === piece.textContent.toUpperCase()) ||
+                           (currentTurn === 'black' && piece.textContent === piece.textContent.toLowerCase()));
+        pieces.forEach(piece => {
+          possibleMoves = getPossibleMoves(piece, fromRow, fromCol, boardState);
+          available_moves = highlightMoves(possibleMoves, fromRow, fromCol);
+          if (available_moves > 0) {
+            return;
+          }
+        })
+      document.title = "Checkmate!";
+      document.getElementById('title').textContent = "Checkmate!";
+      }
     } else {
       console.log("It's not your turn!");
     }
