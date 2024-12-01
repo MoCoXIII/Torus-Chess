@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.11.30.23.25.x';
+document.getElementById('version').textContent = 'Version 0.2024.12.1.15.30.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -136,7 +136,7 @@ const isOpponentPiece = (targetSquare, isWhite) => {
     (isWhite ? targetSquare === targetSquare.toUpperCase() : targetSquare === targetSquare.toLowerCase());
 };
 
-const getPossibleMoves = (piece, fromRow, fromCol) => {
+const getPossibleMoves = (piece, fromRow, fromCol, boardState) => {
   const moves = [];
 
   if (!piece) return moves;
@@ -288,6 +288,7 @@ const highlightMoves = (moves, fromRow, fromCol) => {
   const allSquares = document.querySelectorAll('.square');
   allSquares.forEach(square => {
     square.classList.remove('highlight');
+    // square.style.backgroundColor = '';
     square.removeEventListener('click', handleSquareClick); // Remove previous listeners
   });
 
@@ -295,9 +296,20 @@ const highlightMoves = (moves, fromRow, fromCol) => {
     const square = [...allSquares].find(
       sq => parseInt(sq.dataset.row) === row && parseInt(sq.dataset.col) === col
     );
+    // square.classList.remove('dangerous-move');
     if (square) {
-      square.classList.add('highlight');
-      square.addEventListener('click', (e) => handleSquareClick(e, fromRow, fromCol, row, col));
+      let possibleBoard = [...boardState.map(row => [...row])];
+      possibleBoard[row][col] = possibleBoard[fromRow][fromCol];
+      possibleBoard[fromRow][fromCol] = null;
+      let [kingRow, kingCol] = KingPosition(possibleBoard, currentTurn) || [null, null];
+      let attacked = canBeAttacked(kingRow, kingCol, currentTurn === 'white' ? 'black' : 'white', possibleBoard);
+      console.log("Piece: ", row, col, " | King: ", kingRow, kingCol, " | Attacked: ", attacked, " | King Color: ", currentTurn, " | Opponent: ", currentTurn === 'white' ? 'black' : 'white', " | Possible Board: ", possibleBoard);
+      if (kingCol !== null && attacked) {
+        // square.classList.add('dangerous-move');
+      } else {
+        square.classList.add('highlight');
+        square.addEventListener('click', (e) => handleSquareClick(e, fromRow, fromCol, row, col));
+      }
     }
   });
 };
@@ -317,7 +329,7 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
   let possibleMoves;
 
   // if (selectedPiece) {
-  possibleMoves = getPossibleMoves(piece, fromRow, fromCol);
+  possibleMoves = getPossibleMoves(piece, fromRow, fromCol, boardState);
   // }
   // else {
   //   possibleMoves = getPossibleMoves(piece, fromRow, fromCol);
@@ -408,7 +420,7 @@ const handlePieceClick = (e) => {
       e.target.classList.add('selected');
 
       // Highlight possible moves
-      const possibleMoves = getPossibleMoves(piece, fromRow, fromCol);
+      const possibleMoves = getPossibleMoves(piece, fromRow, fromCol, boardState);
       highlightMoves(possibleMoves, fromRow, fromCol);
       selectedPiece = piece; // Set the selected piece
     } else {
@@ -417,12 +429,12 @@ const handlePieceClick = (e) => {
   }
 };
 
-const canKingBeAttacked = (kingRow, kingCol, opponentColor) => {
+const canBeAttacked = (kingRow, kingCol, opponentColor, possibleState) => {
   for (let row = 0; row < 8; row++) {
     for (let col = 0; col < 8; col++) {
-      const piece = boardState[row][col];
+      const piece = possibleState[row][col];
       if (piece && ((opponentColor === 'white' && piece === piece.toUpperCase()) || (opponentColor === 'black' && piece === piece.toLowerCase()))) {
-        const possibleMoves = getPossibleMoves(piece, row, col);
+        const possibleMoves = getPossibleMoves(piece, row, col, possibleState);
         if (possibleMoves.some(([moveRow, moveCol]) => moveRow === kingRow && moveCol === kingCol)) {
           return true;
         }
@@ -432,7 +444,7 @@ const canKingBeAttacked = (kingRow, kingCol, opponentColor) => {
   return false;
 };
 
-const currentKingPosition = () => {
+const KingPosition = (boardState, currentTurn) => {
   for (let row = 0; row < 8; row++) {
     for (let col = 0; col < 8; col++) {
       const piece = boardState[row][col];
@@ -449,7 +461,7 @@ const enablePieceSelection = () => {
   squares.forEach(square => {
     square.style.backgroundColor = '';
   })
-  
+
   const pieces = document.querySelectorAll('.piece');
   pieces.forEach(piece => {
     if (piece.textContent !== null) {
@@ -464,10 +476,10 @@ const enablePieceSelection = () => {
   });
 
   // const currentKingPosition = currentKingPosition();
-  const [kingRow, kingCol] = currentKingPosition() || [null, null];
+  const [kingRow, kingCol] = KingPosition(boardState, currentTurn) || [null, null];
   const opponentColor = currentTurn === 'white' ? 'black' : 'white';
   if (kingRow !== null) {
-    if (canKingBeAttacked(kingRow, kingCol, opponentColor)) {
+    if (canBeAttacked(kingRow, kingCol, opponentColor, boardState)) {
       const kingSquare = document.querySelector(`.square[data-row="${kingRow}"][data-col="${kingCol}"]`);
       kingSquare.style.backgroundColor = 'red';
     }
