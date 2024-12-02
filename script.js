@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.12.1.17.x';
+document.getElementById('version').textContent = 'Version 0.2024.12.2.18.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -25,9 +25,10 @@ window.addEventListener('load', () => {
 
 let possibleMoves = [];
 const flipTextCheckbox = document.getElementById('flipTextCheckbox');
+const blockDeselectCheckbox = document.getElementById('blockDeselectCheckbox');
 
 document.body.addEventListener('click', (e) => {
-  if (e.target === document.body) {
+  if (e.target === document.body && !blockDeselectCheckbox.checked) {
     // Clear highlights and selection
     highlightMoves([]);
     document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
@@ -326,6 +327,9 @@ let selectedPiece = null;
 const handleSquareClick = (e, fromRow, fromCol, toRow, toCol) => {
   // Try to move the selected piece to the clicked square
   movePiece(fromRow, fromCol, toRow, toCol);
+  if (blockDeselectCheckbox.checked) {
+    return;
+  }
   selectedPiece = null;
   // Clear highlights and selection
   highlightMoves([]);
@@ -383,6 +387,7 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
         document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
           selectedPiece.classList.remove('selected');
         });
+        selectedPiece = null;
 
         // Switch turns
         currentTurn = currentTurn === 'white' ? 'black' : 'white';
@@ -413,9 +418,11 @@ const handlePieceClick = (e) => {
 
   // Clear highlights and selection
   // highlightMoves([]);
-  document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
-    selectedPiece.classList.remove('selected');
-  });
+  if (!blockDeselectCheckbox.checked) {
+    document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
+      selectedPiece.classList.remove('selected');
+    });
+  }
 
   const parent = e.target.parentElement;
   const fromRow = parseInt(parent.dataset.row);
