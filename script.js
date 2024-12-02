@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.12.2.18.5.x';
+document.getElementById('version').textContent = 'Version 0.2024.12.2.18.15.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -24,7 +24,21 @@ window.addEventListener('load', () => {
 });
 
 let possibleMoves = [];
+let currentTurn = 'white'; // 'white' begins the game
+
 const flipTextCheckbox = document.getElementById('flipTextCheckbox');
+flipTextCheckbox.addEventListener('change', () => {
+  if (flipTextCheckbox.checked && currentTurn !== 'white') {
+    document.querySelectorAll('.piece').forEach(piece => {
+      piece.classList.add('flipped-text');
+    })
+  } else {
+    document.querySelectorAll('.piece').forEach(piece => {
+      piece.classList.remove('flipped-text');
+    })
+  }
+});
+
 const blockDeselectCheckbox = document.getElementById('blockDeselectCheckbox');
 
 document.body.addEventListener('click', (e) => {
@@ -41,8 +55,6 @@ document.body.addEventListener('click', (e) => {
 });
 
 const board = document.getElementById('chessboard');
-
-let currentTurn = 'white'; // 'white' begins the game
 
 const boardState = Array(8)
   .fill(null)
