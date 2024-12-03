@@ -364,7 +364,7 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
   //   possibleMoves = getPossibleMoves(piece, fromRow, fromCol);
   // }
 
-  if (possibleMoves.length === 0) {
+  if (possibleMoves.length === 0 && [fromRow, fromCol] === [toRow, toCol]) {
     selectedPiece = null;
   // Clear highlights and selection
   highlightMoves([]);
