@@ -525,7 +525,9 @@ const enablePieceSelection = () => {
       if ((currentTurn === 'white' && boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)].toUpperCase() === boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)]) ||
         (currentTurn === 'black' && boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)].toLowerCase() === boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)])) {
         piece.removeEventListener('click', handlePieceClick);
-        if (getPossibleMoves(boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)]).length !== 0)
+        let row = parseInt(piece.parentElement.dataset.row);
+        let col = parseInt(piece.parentElement.dataset.col);
+        if (getPossibleMoves(boardState[row][col], row, col).length !== 0)
         {piece.addEventListener('click', handlePieceClick);
         movablePieces++;}
       } else {
