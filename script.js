@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.12.3.18.30.x';
+document.getElementById('version').textContent = 'Version 0.2024.12.3.19.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -641,7 +641,7 @@ const enablePieceSelection = () => {
     document.getElementById('title').textContent = firstLetter + totalPossibleMoves[0][1] + " to " + thirdLetter + totalPossibleMoves[0][3] + "Forced";
   } else {
     document.title = "Torus Chess " + totalPossibleMoves.length;
-    document.getElementById('title').textContent = "Torus Chess";
+    document.getElementById('title').textContent = "Torus Chess" + totalPossibleMoves.length;
   }
 
   if (totalPossibleMoves.length !== 0 && currentTurn === 'black' && document.getElementById('bot').checked) {
