@@ -11,10 +11,24 @@
   <h1 id="title">Torus Chess</h1>
   <div id="chessboard"></div>
   <div id="turn-indicator">White's Turn</div>
+  <!-- <br>
+  <label for="defaultPosition">Default Position:</label>
+  <select id="defaultPosition">
+    <option value="standard">Standard Torus Chess</option>
+    <option value="stupid">Stupid Mode Example</option>
+    <option value="plain">Standard Chess</option>
+  </select>
+  <br> -->
+  <br>
   <input type="checkbox" id="flipTextCheckbox">
   <label for="flipTextCheckbox">Flip Text</label>
   <input type="checkbox" id="blockDeselectCheckbox">
   <label for="blockDeselectCheckbox">No Deselect</label>
+  <input type="checkbox" id="bot">
+  <label for="bot">Enable Bot</label>
+  <br>
+  <input type="checkbox" id="stupid">
+  <label for="stupid">Stupid Mode (allows endangering your king when the opponents' attacking pieces are pinned)</label>
   <script src="script.js"></script>
 </body>
 </html>
