@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.12.2.18.2x.x';
+document.getElementById('version').textContent = 'Version 0.2024.12.3.13.45.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
