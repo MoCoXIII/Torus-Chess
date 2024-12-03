@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.12.3.13.45.x';
+document.getElementById('version').textContent = 'Version 0.2024.12.3.14.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -364,14 +364,14 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
   //   possibleMoves = getPossibleMoves(piece, fromRow, fromCol);
   // }
 
-  if (possibleMoves.length === 0 && [fromRow, fromCol] === [toRow, toCol]) {
-    selectedPiece = null;
-  // Clear highlights and selection
-  highlightMoves([]);
-  document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
-    selectedPiece.classList.remove('selected');
-  });
-  }
+//  if (possibleMoves.length === 0 && [fromRow, fromCol] === [toRow, toCol]) {
+//    selectedPiece = null;
+//  // Clear highlights and selection
+//  highlightMoves([]);
+//  document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
+//    selectedPiece.classList.remove('selected');
+//  });
+//  }
 
   console.log('Possible moves:', possibleMoves);
   const isValidMove = possibleMoves.some(
@@ -519,17 +519,25 @@ const enablePieceSelection = () => {
   })
 
   const pieces = document.querySelectorAll('.piece');
+  let movablePieces = 0;
   pieces.forEach(piece => {
     if (piece.textContent !== null) {
       if ((currentTurn === 'white' && boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)].toUpperCase() === boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)]) ||
         (currentTurn === 'black' && boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)].toLowerCase() === boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)])) {
         piece.removeEventListener('click', handlePieceClick);
-        piece.addEventListener('click', handlePieceClick);
+        if (getPossibleMoves(boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)]).length !== 0)
+        {piece.addEventListener('click', handlePieceClick);
+        movablePieces++;}
       } else {
         piece.removeEventListener('click', handlePieceClick);
       }
     }
   });
+
+  if (movablePieces !== 0) {
+    document.title = "Checkmate!";
+        document.getElementById('title').textContent = "Checkmate!";
+  }
 
   // const currentKingPosition = currentKingPosition();
   const [kingRow, kingCol] = KingPosition(boardState, currentTurn) || [null, null];
