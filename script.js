@@ -641,7 +641,7 @@ const enablePieceSelection = () => {
     document.getElementById('title').textContent = firstLetter + totalPossibleMoves[0][1] + " to " + thirdLetter + totalPossibleMoves[0][3] + "Forced";
   } else {
     document.title = "Torus Chess " + totalPossibleMoves.length;
-    document.getElementById('title').textContent = "Torus Chess" + totalPossibleMoves.length;
+    document.getElementById('title').textContent = "Torus Chess " + totalPossibleMoves.length;
   }
 
   if (totalPossibleMoves.length !== 0 && currentTurn === 'black' && document.getElementById('bot').checked) {
