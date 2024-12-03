@@ -23,8 +23,20 @@ body {
   height: 60px;
 }
 
-.square.dangerous-move {
+.movingPiece {
+  color: blue;
+}
+
+.square.endangered {
   background-color: red !important;
+}
+
+.square.fromSquare.move {
+  background-color: lightblue;
+}
+
+.square.toSquare.move {
+  background-color: skyblue;
 }
 
 .square.light {
@@ -48,7 +60,7 @@ body {
 }
 
 .square.highlight {
-  background-color: yellow;
+  background-color: yellow !important;
   cursor: pointer;
 }
 

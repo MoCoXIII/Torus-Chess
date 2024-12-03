@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.12.3.19.x';
+document.getElementById('version').textContent = 'Version 0.2024.12.3.20.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -55,6 +55,15 @@ document.body.addEventListener('click', (e) => {
 });
 
 const board = document.getElementById('chessboard');
+
+board.addEventListener('click', (e) => {
+  if (e.target.classList.contains('square')) {
+    const square = e.target;
+    // if (possibleMoves.includes([selectedPiece.parentElement.dataset.row, selectedPiece.parentElement.dataset.col, square.dataset.row, square.dataset.col])){
+    handleSquareClick(square.dataset.row, square.dataset.col);
+    // }
+  }
+});
 
 const boardState = Array(8)
   .fill(null)
@@ -210,7 +219,7 @@ const legalMove = (move, pieceIsWhite, attackCheck) => {
     return true;
   };
   let attacked = canBeAttacked(kingRow, kingCol, pieceIsWhite ? 'black' : 'white', possibleBoard, attackCheck = attackCheck);
-  console.log("Piece: ", row, col, " | King: ", kingRow, kingCol, " | Attacked: ", attacked, " | King Color: ", currentTurn, " | Opponent: ", currentTurn === 'white' ? 'black' : 'white', " | Possible Board: ", possibleBoard);
+  // console.log("Piece: ", row, col, " | King: ", kingRow, kingCol, " | Attacked: ", attacked, " | King Color: ", currentTurn, " | Opponent: ", currentTurn === 'white' ? 'black' : 'white', " | Possible Board: ", possibleBoard);
   if (!attacked) {
     return true;
   }
@@ -219,7 +228,7 @@ const legalMove = (move, pieceIsWhite, attackCheck) => {
 }
 
 const getPossibleMoves = (piece, fromRow, fromCol, boardState, attackCheck = -1) => {
-  console.log("Attack Check: ", attackCheck);
+  // console.log("Attack Check: ", attackCheck);
   let moves = [];
 
   if (!piece) return moves;
@@ -377,13 +386,13 @@ function updatePieceClasses() {
   });
 }
 
-const highlightMoves = (moves, fromRow, fromCol) => {
+const highlightMoves = (moves) => {
   // let available_moves = 0;
   const allSquares = document.querySelectorAll('.square');
   allSquares.forEach(square => {
     square.classList.remove('highlight');
     // square.style.backgroundColor = '';
-    square.removeEventListener('click', handleSquareClick); // Remove previous listeners
+    // square.removeEventListener('click', handleSquareClick); // Remove previous listeners
   });
 
   moves.forEach(([fr, fc, row, col]) => {
@@ -392,6 +401,10 @@ const highlightMoves = (moves, fromRow, fromCol) => {
     );
     // square.classList.remove('dangerous-move');
     if (square) {
+      if (square.classList.contains('highlight')) {
+        square.classList.remove('highlight');
+        // square.removeEventListener('click', handleSquareClick);
+      }
       // let possibleBoard = [...boardState.map(row => [...row])];
       // possibleBoard[row][col] = possibleBoard[fromRow][fromCol];
       // possibleBoard[fromRow][fromCol] = null;
@@ -402,9 +415,15 @@ const highlightMoves = (moves, fromRow, fromCol) => {
       //   // square.classList.add('dangerous-move');
       // } else {
       square.classList.add('highlight');
-      square.addEventListener('click', (e) => handleSquareClick(e, fromRow, fromCol, row, col));
+      // const squareClickArgs = (e) => handleSquareClick(fr, fc, row, col);
+      // square.addEventListener('click', squareClickArgs);
       // available_moves++;
       // }
+      let piece = square.firstChild;
+      if (piece) {
+        // console.log(piece);
+        piece.addEventListener('click', handlePieceClick);
+      }
     }
   });
   // return available_moves;
@@ -412,24 +431,37 @@ const highlightMoves = (moves, fromRow, fromCol) => {
 
 let selectedPiece = null;
 
-const handleSquareClick = (e, fromRow, fromCol, toRow, toCol) => {
+const handleSquareClick = (row, col) => {
   // Try to move the selected piece to the clicked square
-  movePiece(fromRow, fromCol, toRow, toCol);
+  [row, col] = [parseInt(row), parseInt(col)];
+  // console.log(selectedPiece, selectedPiece.parentElement.dataset, row, col);
+  if (!selectedPiece) {
+    return;
+  }
+  const fromRow = parseInt(selectedPiece.parentElement.dataset.row);
+  const fromCol = parseInt(selectedPiece.parentElement.dataset.col);
+  movePiece(fromRow, fromCol, row, col);
   if (blockDeselectCheckbox.checked) {
     return;
   }
-  selectedPiece = null;
-  // Clear highlights and selection
-  highlightMoves([]);
-  document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
-    selectedPiece.classList.remove('selected');
-  });
+  // selectedPiece = null;
+  // // Clear highlights and selection
+  // highlightMoves([]);
+  // document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
+  //   selectedPiece.classList.remove('selected');
+  // });
 };
 
 
 // Handle piece movement and torus logic
 const movePiece = (fromRow, fromCol, toRow, toCol) => {
   const piece = boardState[fromRow][fromCol];
+  if (piece && boardState[toRow][toCol] &&
+    (piece.toUpperCase() === piece && boardState[toRow][toCol].toUpperCase() === boardState[toRow][toCol] ||
+      piece.toLowerCase() === piece && boardState[toRow][toCol].toLowerCase() === boardState[toRow][toCol])) {
+    console.log("Trying to capture same color piece " + boardState[toRow][toCol] + " using " + piece + ", aborting move.");
+    return;
+  }
   // let possibleMoves;
 
   // if (selectedPiece) {
@@ -449,13 +481,21 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
   //  });
   //  }
 
-  console.log('Possible moves:', possibleMoves);
+  // console.log('Possible moves:', possibleMoves);
   const isValidMove = possibleMoves.some(
     ([fr, fc, row, col]) => row === toRow && col === toCol
   );
-  console.log('isValidMove:', piece, fromRow, fromCol, toRow, toCol, isValidMove);
+  // console.log('isValidMove:', piece, fromRow, fromCol, toRow, toCol, isValidMove);
 
   if (isValidMove) {
+    document.querySelectorAll('.square').forEach(square => {
+      square.classList.remove('fromSquare', "move");
+      square.classList.remove('toSquare', "move");
+    })
+    // document.querySelectorAll('.piece').forEach(piece => {
+    //   piece.classList.remove('movingPiece');
+    // })
+
     // Move the piece in the board state
     boardState[toRow][toCol] = piece;
     boardState[fromRow][fromCol] = null;
@@ -478,6 +518,13 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
       if (movingPiece) {
         toSquare.innerHTML = '';
         toSquare.appendChild(movingPiece);
+
+        // fromSquare.style.backgroundColor = 'lightblue';
+        fromSquare.classList.add('fromSquare', "move");
+        // toSquare.style.backgroundColor = 'darkblue';
+        toSquare.classList.add('toSquare', "move");
+        // movingPiece.style.color = 'blue';
+        // movingPiece.classList.add('movingPiece');
 
         // Clear highlights and selection
         highlightMoves([]);
@@ -510,27 +557,42 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
 };
 
 const handlePieceClick = (e) => {
+  // if (
+  //   !e.target.classList.contains('current-turn')
+  //   // ||
+  //   // (currentTurn === 'white' && piece === piece.toUpperCase())
+  //   // ||
+  //   // (currentTurn === 'black' && piece === piece.toLowerCase())
+  // ) {
+  //   return;
+  // }
   e.preventDefault();
   e.stopPropagation();
 
   // Clear highlights and selection
   // highlightMoves([]);
-  if (!blockDeselectCheckbox.checked) {
+  if (!blockDeselectCheckbox.checked && selectedPiece === null) {
     document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
       selectedPiece.classList.remove('selected');
     });
   }
 
-  const parent = e.target.parentElement;
-  const fromRow = parseInt(parent.dataset.row);
-  const fromCol = parseInt(parent.dataset.col);
-  const piece = boardState[fromRow][fromCol];
-
   // Check if a piece is already selected
+  // console.log(selectedPiece);
   if (selectedPiece !== null) {
     // Try to move the selected piece to the clicked square
-    movePiece(fromRow, fromCol, fromRow, fromCol);
+    // console.log("Moving onto piece...");
+    let fromRow = parseInt(selectedPiece.parentElement.dataset.row);
+    let fromCol = parseInt(selectedPiece.parentElement.dataset.col);
+    let toRow = parseInt(e.target.parentElement.dataset.row);
+    let toCol = parseInt(e.target.parentElement.dataset.col);
+    movePiece(fromRow, fromCol, toRow, toCol);
   } else {
+    const parent = e.target.parentElement;
+    const fromRow = parseInt(parent.dataset.row);
+    const fromCol = parseInt(parent.dataset.col);
+    const piece = boardState[fromRow][fromCol];
+
     // Enforce turn-based rules
     if ((currentTurn === 'white' && piece === piece.toUpperCase()) ||
       (currentTurn === 'black' && piece === piece.toLowerCase())) {
@@ -539,9 +601,10 @@ const handlePieceClick = (e) => {
 
       // Highlight possible moves
       let possibleMoves = getPossibleMoves(piece, fromRow, fromCol, boardState);
-      selectedPiece = piece; // Set the selected piece
+      // selectedPiece = piece; // Set the selected piece
+      selectedPiece = e.target;
       // let available_moves = 
-      highlightMoves(possibleMoves, fromRow, fromCol);
+      highlightMoves(possibleMoves);
       // if (available_moves === 0) {
       //   const pieces = Array.from(document.querySelectorAll('.piece'))
       //     .filter(piece => (currentTurn === 'white' && piece.textContent === piece.textContent.toUpperCase()) ||
@@ -596,7 +659,8 @@ const KingPosition = (boardState, currentTurn) => {
 const enablePieceSelection = () => {
   const squares = document.querySelectorAll('.square');
   squares.forEach(square => {
-    square.style.backgroundColor = '';
+    // square.style.backgroundColor = '';
+    square.classList.remove('endangered');
   })
 
   const pieces = document.querySelectorAll('.piece');
@@ -633,8 +697,14 @@ const enablePieceSelection = () => {
   });
 
   if (totalPossibleMoves.length === 0) {
-    document.title = "Checkmate!";
-    document.getElementById('title').textContent = "Checkmate!";
+    let king = KingPosition(boardState, currentTurn);
+    if (canBeAttacked(king[0], king[1], currentTurn === 'white' ? 'black' : 'white', boardState)) {
+      document.title = "Checkmate!";
+      document.getElementById('title').textContent = "Checkmate!";
+    } else {
+      document.title = "Stalemate!";
+      document.getElementById('title').textContent = "Stalemate!";
+    }
   } else if (totalPossibleMoves.length === 1) {
     let firstLetter = totalPossibleMoves[0][0] === '7' ? 'a' : totalPossibleMoves[0][0] === '6' ? 'b' : totalPossibleMoves[0][0] === '5' ? 'c' : totalPossibleMoves[0][0] === '4' ? 'd' : totalPossibleMoves[0][0] === '3' ? 'e' : totalPossibleMoves[0][0] === '2' ? 'f' : totalPossibleMoves[0][0] === '1' ? 'g' : totalPossibleMoves[0][0] === '0' ? 'h' : totalPossibleMoves[0][0];
     let thirdLetter = totalPossibleMoves[0][2] === '7' ? 'a' : totalPossibleMoves[0][2] === '6' ? 'b' : totalPossibleMoves[0][2] === '5' ? 'c' : totalPossibleMoves[0][2] === '4' ? 'd' : totalPossibleMoves[0][2] === '3' ? 'e' : totalPossibleMoves[0][2] === '2' ? 'f' : totalPossibleMoves[0][2] === '1' ? 'g' : totalPossibleMoves[0][2] === '0' ? 'h' : totalPossibleMoves[0][2];
@@ -655,7 +725,8 @@ const enablePieceSelection = () => {
   if (kingRow !== null) {
     if (canBeAttacked(kingRow, kingCol, opponentColor, boardState)) {
       const kingSquare = document.querySelector(`.square[data-row="${kingRow}"][data-col="${kingCol}"]`);
-      kingSquare.style.backgroundColor = 'red';
+      // kingSquare.style.backgroundColor = 'red';
+      kingSquare.classList.add('endangered');
     }
   }
 };
