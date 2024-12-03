@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.12.3.22.x';
+document.getElementById('version').textContent = 'Version 0.2024.12.3.23.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -571,15 +571,31 @@ const handlePieceClick = (e) => {
 
   // Clear highlights and selection
   // highlightMoves([]);
-  if (!blockDeselectCheckbox.checked && selectedPiece === null) {
-    document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
-      selectedPiece.classList.remove('selected');
-    });
-  }
+  // if (!blockDeselectCheckbox.checked && selectedPiece === null) {
+  //   document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
+  //     selectedPiece.classList.remove('selected');
+  //   });
+  // }
 
   // Check if a piece is already selected
   // console.log(selectedPiece);
   if (selectedPiece !== null) {
+    const parent = e.target.parentElement;
+    const fR = parseInt(parent.dataset.row);
+    const fC = parseInt(parent.dataset.col);
+    const piece = boardState[fR][fC];
+
+    if ((currentTurn === 'white' && piece === piece.toUpperCase()) ||
+      (currentTurn === 'black' && piece === piece.toLowerCase())) {
+        selectedPiece.classList.remove('selected');
+      e.target.classList.add('selected');
+
+      let possibleMoves = getPossibleMoves(piece, fR, fC, boardState);
+      selectedPiece = e.target;
+      highlightMoves(possibleMoves);
+      return;
+    }
+
     // Try to move the selected piece to the clicked square
     // console.log("Moving onto piece...");
     let fromRow = parseInt(selectedPiece.parentElement.dataset.row);
@@ -589,22 +605,22 @@ const handlePieceClick = (e) => {
     movePiece(fromRow, fromCol, toRow, toCol);
   } else {
     const parent = e.target.parentElement;
-    const fromRow = parseInt(parent.dataset.row);
-    const fromCol = parseInt(parent.dataset.col);
-    const piece = boardState[fromRow][fromCol];
+    const fR = parseInt(parent.dataset.row);
+    const fC = parseInt(parent.dataset.col);
+    const piece = boardState[fR][fC];
 
-    // Enforce turn-based rules
     if ((currentTurn === 'white' && piece === piece.toUpperCase()) ||
       (currentTurn === 'black' && piece === piece.toLowerCase())) {
-      // Mark the piece as selected
       e.target.classList.add('selected');
 
-      // Highlight possible moves
-      let possibleMoves = getPossibleMoves(piece, fromRow, fromCol, boardState);
-      // selectedPiece = piece; // Set the selected piece
+      let possibleMoves = getPossibleMoves(piece, fR, fC, boardState);
       selectedPiece = e.target;
-      // let available_moves = 
       highlightMoves(possibleMoves);
+      // Enforce turn-based rules
+      // Mark the piece as selected
+      // Highlight possible moves
+      // selectedPiece = piece; // Set the selected piece
+      // let available_moves = 
       // if (available_moves === 0) {
       //   const pieces = Array.from(document.querySelectorAll('.piece'))
       //     .filter(piece => (currentTurn === 'white' && piece.textContent === piece.textContent.toUpperCase()) ||
