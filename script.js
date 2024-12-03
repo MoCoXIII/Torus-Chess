@@ -364,6 +364,15 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
   //   possibleMoves = getPossibleMoves(piece, fromRow, fromCol);
   // }
 
+  if (possibleMoves.length === 0) {
+    selectedPiece = null;
+  // Clear highlights and selection
+  highlightMoves([]);
+  document.querySelectorAll('.piece.selected').forEach(selectedPiece => {
+    selectedPiece.classList.remove('selected');
+  });
+  }
+
   console.log('Possible moves:', possibleMoves);
   const isValidMove = possibleMoves.some(
     ([row, col]) => row === toRow && col === toCol
