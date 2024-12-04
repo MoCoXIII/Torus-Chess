@@ -102,6 +102,19 @@ let initialPieces = {
   7: ['', '', '', '', '', '', '', ''],
 };
 
+// initialPieces = {
+//   0: [null, "b", null, "", "", "p", "b", "p"],
+//   1: ["q", "p", "", "", "", "", "r", "k"],
+//   2: ["p", "p", "", null, "n", "", null, "p"],
+//   3: ["", "", "", "", "", "Q", "p", ""],
+//   4: ["", "", "", "", "n", "", "", "P"],
+//   5: ["P", "P", "", "N", "N", "", "P", null],
+//   6: [null, "R", "", "", "", "", "R", "K"],
+//   7: ["P", null, "P", "", "", "P", "B", "P"]
+// };
+
+// let fenString = "";
+// currentTurn = "black";
 let fenString = "pbp2pbp/qr4rk/pp1nn1pp/8/8/PP1NN1PP/QR4RK/PBP2PBP";  // standard Torus-Chess
 // let fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";  // standard Chess
 // let fenString = "8/8/5p2/1R2q1k1/2P5/2B5/1K6/8";  // stupid mode example
@@ -770,9 +783,9 @@ const enablePieceSelection = () => {
       document.getElementById('title').textContent = "Stalemate!";
     }
   } else if (totalPossibleMoves.length === 1) {
-    let firstLetter = totalPossibleMoves[0][0] === '7' ? 'a' : totalPossibleMoves[0][0] === '6' ? 'b' : totalPossibleMoves[0][0] === '5' ? 'c' : totalPossibleMoves[0][0] === '4' ? 'd' : totalPossibleMoves[0][0] === '3' ? 'e' : totalPossibleMoves[0][0] === '2' ? 'f' : totalPossibleMoves[0][0] === '1' ? 'g' : totalPossibleMoves[0][0] === '0' ? 'h' : totalPossibleMoves[0][0];
-    let thirdLetter = totalPossibleMoves[0][2] === '7' ? 'a' : totalPossibleMoves[0][2] === '6' ? 'b' : totalPossibleMoves[0][2] === '5' ? 'c' : totalPossibleMoves[0][2] === '4' ? 'd' : totalPossibleMoves[0][2] === '3' ? 'e' : totalPossibleMoves[0][2] === '2' ? 'f' : totalPossibleMoves[0][2] === '1' ? 'g' : totalPossibleMoves[0][2] === '0' ? 'h' : totalPossibleMoves[0][2];
-    document.getElementById('title').textContent = firstLetter + totalPossibleMoves[0][1] + " to " + thirdLetter + totalPossibleMoves[0][3] + "Forced";
+    let firstLetter = totalPossibleMoves[0][0] === 7 ? 'a' : totalPossibleMoves[0][0] === 6 ? 'b' : totalPossibleMoves[0][0] === 5 ? 'c' : totalPossibleMoves[0][0] === 4 ? 'd' : totalPossibleMoves[0][0] === 3 ? 'e' : totalPossibleMoves[0][0] === 2 ? 'f' : totalPossibleMoves[0][0] === 1 ? 'g' : totalPossibleMoves[0][0] === 0 ? 'h' : totalPossibleMoves[0][0];
+    let thirdLetter = totalPossibleMoves[0][2] === 7 ? 'a' : totalPossibleMoves[0][2] === 6 ? 'b' : totalPossibleMoves[0][2] === 5 ? 'c' : totalPossibleMoves[0][2] === 4 ? 'd' : totalPossibleMoves[0][2] === 3 ? 'e' : totalPossibleMoves[0][2] === 2 ? 'f' : totalPossibleMoves[0][2] === 1 ? 'g' : totalPossibleMoves[0][2] === 0 ? 'h' : totalPossibleMoves[0][2];
+    document.getElementById('title').textContent = (firstLetter) + (totalPossibleMoves[0][1]) + (thirdLetter) + (totalPossibleMoves[0][3]) + " Forced";
   } else {
     document.title = "Torus Chess " + totalPossibleMoves.length;
     document.getElementById('title').textContent = "Torus Chess " + totalPossibleMoves.length;
