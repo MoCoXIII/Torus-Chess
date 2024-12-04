@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.12.4.20.40.x';
+document.getElementById('version').textContent = 'Version 0.2024.12.4.21.30.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -113,9 +113,9 @@ let initialPieces = {
 //   7: ["P", null, "P", "", "", "P", "B", "P"]
 // };
 
-// let fenString = "";
+let fenString = "";
 // currentTurn = "black";
-let fenString = "pbp2pbp/qr4rk/pp1nn1pp/8/8/PP1NN1PP/QR4RK/PBP2PBP";  // standard Torus-Chess
+fenString = "pbp2pbp/qr4rk/pp1nn1pp/8/8/PP1NN1PP/QR4RK/PBP2PBP";  // standard Torus-Chess
 // let fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";  // standard Chess
 // let fenString = "8/8/5p2/1R2q1k1/2P5/2B5/1K6/8";  // stupid mode example
 
