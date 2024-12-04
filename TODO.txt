@@ -1,2 +1,3 @@
 OPTIONAL // Checkmate detection
 NOT PLANNED // Pawn Promotion
+- fix pawn loop breaking game
