@@ -241,12 +241,14 @@ const getPossibleMoves = (piece, fromRow, fromCol, boardState, attackCheck = -1)
     // Pawn movement
     const direction = isWhite ? -1 : 1; // White moves up, Black moves down
     const startRow = isWhite ? 6 : 1; // Starting row for pawns
+    fromCol = parseInt(fromCol);
 
-    let fr_d = (fromRow + direction) % 8;
-    let fc_1 = (fromCol - 1) % 8;
-    let fc_2 = (fromCol + 1) % 8;
+    let fr_d = (fromRow + direction + 8) % 8;
+    let fc_1 = (fromCol - 1 + 8) % 8;
+    let fc_2 = (fromCol + 1 + 8) % 8;
 
     // Regular move
+    // console.log(boardState, fr_d, fromCol);
     if (!boardState[fr_d][fromCol]) {
       const possibleMove = [fromRow, fromCol, fr_d, fromCol];
       if (legalMove(possibleMove, isWhite, attackCheck = attackCheck)) { moves.push(possibleMove); };
@@ -276,6 +278,8 @@ const getPossibleMoves = (piece, fromRow, fromCol, boardState, attackCheck = -1)
       const possibleMove = [fromRow, fromCol, fr_d, fc_2]
       if (legalMove(possibleMove, isWhite, attackCheck = attackCheck)) { moves.push(possibleMove); };
     }
+
+    return moves;
   }
 
   // Add other piece logic (e.g., rook, knight, etc.)
@@ -587,7 +591,7 @@ const handlePieceClick = (e) => {
 
     if ((currentTurn === 'white' && piece === piece.toUpperCase()) ||
       (currentTurn === 'black' && piece === piece.toLowerCase())) {
-        selectedPiece.classList.remove('selected');
+      selectedPiece.classList.remove('selected');
       e.target.classList.add('selected');
 
       let possibleMoves = getPossibleMoves(piece, fR, fC, boardState);
@@ -650,7 +654,7 @@ const canBeAttacked = (kingRow, kingCol, opponentColor, possibleState, attackChe
     for (let col = 0; col < 8; col++) {
       const piece = possibleState[row][col];
       if (piece && ((opponentColor === 'white' && piece === piece.toUpperCase()) || (opponentColor === 'black' && piece === piece.toLowerCase()))) {
-        const possibleMoves = getPossibleMoves(piece, row, col, possibleState, attackCheck = attackCheck);
+        const possibleMoves = getPossibleMoves(piece, row, parseInt(col), possibleState, attackCheck = attackCheck);
         if (possibleMoves.some(([fr, fc, moveRow, moveCol]) => moveRow === kingRow && moveCol === kingCol)) {
           return true;
         }
