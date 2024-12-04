@@ -81,6 +81,11 @@ body {
   /* Disables dragging in other browsers */
 }
 
+.piece.obvious {
+  /* color: orangered; */
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+}
+
 #turn-indicator {
   margin: 10px 0;
   font-size: 20px;

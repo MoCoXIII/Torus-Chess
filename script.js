@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.12.4.13.30.x';
+document.getElementById('version').textContent = 'Version 0.2024.12.4.13.45.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -51,6 +51,19 @@ document.body.addEventListener('click', (e) => {
     selectedPiece = null;
     selectedSquare = null;
     possibleMoves = [];
+  }
+});
+
+const obviousCheckBox = document.getElementById('obvious');
+obviousCheckBox.addEventListener('change', () => {
+  if (obviousCheckBox.checked) {
+    document.querySelectorAll('.piece.obvious').forEach(piece => {
+      piece.style.color = 'orangered';
+    });
+  } else {
+    document.querySelectorAll('.piece.obvious').forEach(piece => {
+      piece.style.color = '';
+    })
   }
 });
 
@@ -696,8 +709,11 @@ const enablePieceSelection = () => {
         let thisPiecesPossibleMoves = getPossibleMoves(boardState[row][col], row, col, boardState);
         if (thisPiecesPossibleMoves.length !== 0) {
           // piece.style.boxShadow = "0 0 10px rgba(255, 165, 0, 0.8)";
+          // if (document.getElementById('obvious').checked) {
           // piece.style.color = 'rgba(255, 165, 0, 0.8)';
-          piece.style.textShadow = "2px 2px 2px rgba(0,0,0,0.5)";
+          piece.classList.add('obvious');
+          // }
+          // piece.style.textShadow = "2px 2px 2px rgba(0,0,0,0.5)";
 
           piece.addEventListener('click', handlePieceClick);
           piece.classList.add('current-turn');
@@ -711,7 +727,8 @@ const enablePieceSelection = () => {
 
         // piece.style.boxShadow = "";
         // piece.style.color = '';
-        piece.style.textShadow = "";
+        piece.classList.remove('obvious');
+        // piece.style.textShadow = "";
       }
     }
   });
