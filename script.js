@@ -29,7 +29,7 @@ let currentTurn = 'white'; // 'white' begins the game
 const flipBoardCheckbox = document.getElementById('flipBoardCheckbox');
 flipBoardCheckbox.addEventListener('change', () => {
   if (flipBoardCheckbox.checked) {
-    board.classList.add('flipped-board', "flipped");
+    board.classList.add('flipped-board');
   } else {
     board.classList.remove('flipped-board');
   }
@@ -562,15 +562,15 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
         // Switch turns
         currentTurn = currentTurn === 'white' ? 'black' : 'white';
         let pieces = document.querySelectorAll('.piece');
-        if (flipBoardCheckbox.checked) {
-          if (currentTurn === 'black') {
-            board.classList.add('flipped');
-          } else {
-            board.classList.remove('flipped');
-          }
+        // if (flipBoardCheckbox.checked) {
+        if (currentTurn === 'black') {
+          board.classList.add('flipped');
         } else {
           board.classList.remove('flipped');
         }
+        // } else {
+        //   board.classList.remove('flipped');
+        // }
         if (flipTextCheckbox.checked) {
           pieces.forEach(piece => {
             piece.classList.toggle('flipped-text');
