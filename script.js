@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.12.4.16.20.x';
+document.getElementById('version').textContent = 'Version 0.2024.12.4.20.40.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -29,7 +29,7 @@ let currentTurn = 'white'; // 'white' begins the game
 const flipBoardCheckbox = document.getElementById('flipBoardCheckbox');
 flipBoardCheckbox.addEventListener('change', () => {
   if (flipBoardCheckbox.checked) {
-    board.classList.add('flipped-board');
+    board.classList.add('flipped-board', "flipped");
   } else {
     board.classList.remove('flipped-board');
   }
@@ -563,7 +563,11 @@ const movePiece = (fromRow, fromCol, toRow, toCol) => {
         currentTurn = currentTurn === 'white' ? 'black' : 'white';
         let pieces = document.querySelectorAll('.piece');
         if (flipBoardCheckbox.checked) {
-          board.classList.toggle('flipped');
+          if (currentTurn === 'black') {
+            board.classList.add('flipped');
+          } else {
+            board.classList.remove('flipped');
+          }
         } else {
           board.classList.remove('flipped');
         }
