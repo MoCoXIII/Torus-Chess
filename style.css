@@ -68,6 +68,10 @@ body {
   user-select: none;
 }
 
+.flipped-board.flipped {
+  transform: rotate(180deg);
+}
+
 .piece.current-turn {
   cursor: pointer;
 }
