@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.12.4.16.x';
+document.getElementById('version').textContent = 'Version 0.2024.12.4.16.20.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -66,11 +66,11 @@ document.body.addEventListener('click', (e) => {
 const obviousCheckBox = document.getElementById('obvious');
 obviousCheckBox.addEventListener('change', () => {
   if (obviousCheckBox.checked) {
-    document.querySelectorAll('.piece.obvious').forEach(piece => {
+    document.querySelectorAll('.piece.current-turn.obvious').forEach(piece => {
       piece.style.color = 'orangered';
     });
   } else {
-    document.querySelectorAll('.piece.obvious').forEach(piece => {
+    document.querySelectorAll('.piece.current-turn.obvious').forEach(piece => {
       piece.style.color = '';
     })
   }
@@ -714,9 +714,15 @@ const enablePieceSelection = () => {
   let totalPossibleMoves = [];
   pieces.forEach(piece => {
     if (piece.textContent !== null) {
+      piece.removeEventListener('click', handlePieceClick);
+      if (piece.classList.contains('obvious')) {
+        piece.style.color = '';
+      }
+      piece.classList.remove('obvious');
+      piece.classList.remove('current-turn');
+
       if ((currentTurn === 'white' && boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)].toUpperCase() === boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)]) ||
         (currentTurn === 'black' && boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)].toLowerCase() === boardState[parseInt(piece.parentElement.dataset.row)][parseInt(piece.parentElement.dataset.col)])) {
-        piece.removeEventListener('click', handlePieceClick);
 
         let row = parseInt(piece.parentElement.dataset.row);
         let col = parseInt(piece.parentElement.dataset.col);
@@ -726,6 +732,9 @@ const enablePieceSelection = () => {
           // if (document.getElementById('obvious').checked) {
           // piece.style.color = 'rgba(255, 165, 0, 0.8)';
           piece.classList.add('obvious');
+          if (obviousCheckBox.checked) {
+            piece.style.color = "orangered";
+          }
           // }
           // piece.style.textShadow = "2px 2px 2px rgba(0,0,0,0.5)";
 
@@ -735,13 +744,13 @@ const enablePieceSelection = () => {
           totalPossibleMoves = totalPossibleMoves.concat(thisPiecesPossibleMoves);
         }
 
-      } else {
-        piece.removeEventListener('click', handlePieceClick);
-        piece.classList.remove('current-turn');
+        // } else {
+        // piece.removeEventListener('click', handlePieceClick);
+        // piece.classList.remove('current-turn');
 
         // piece.style.boxShadow = "";
         // piece.style.color = '';
-        piece.classList.remove('obvious');
+        // piece.classList.remove('obvious');
         // piece.style.textShadow = "";
       }
     }
