@@ -633,13 +633,6 @@ const handlePieceClick = (e) => {
     const fC = parseInt(parent.dataset.col);
     const piece = boardState[fR][fC];
 
-    if (blockDeselectCheckBox.checked && !(
-      (currentTurn === 'white' && piece === piece.toUpperCase()) ||
-      (currentTurn === 'black' && piece === piece.toLowerCase())
-    )) {
-      return;
-    }
-
     if ((currentTurn === 'white' && piece === piece.toUpperCase()) ||
       (currentTurn === 'black' && piece === piece.toLowerCase())) {
       selectedPiece.classList.remove('selected');
