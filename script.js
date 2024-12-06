@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.12.4.21.30.x';
+document.getElementById('version').textContent = 'Version 0.2024.12.6.13.30.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -644,7 +644,7 @@ const handlePieceClick = (e) => {
       return;
     }
 
-    if (blockDeselectCheckBox.checked) {
+    if (blockDeselectCheckbox.checked) {
       return;
     }
 
