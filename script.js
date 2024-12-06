@@ -644,6 +644,10 @@ const handlePieceClick = (e) => {
       return;
     }
 
+    if (blockDeselectCheckBox.checked) {
+      return;
+    }
+
     // Try to move the selected piece to the clicked square
     // console.log("Moving onto piece...");
     let fromRow = parseInt(selectedPiece.parentElement.dataset.row);
