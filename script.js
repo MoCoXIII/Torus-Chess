@@ -628,14 +628,17 @@ const handlePieceClick = (e) => {
   // Check if a piece is already selected
   // console.log(selectedPiece);
   if (selectedPiece !== null) {
-    if (blockDeselectCheckBox.checked) {
-      return;
-    }
-    
     const parent = e.target.parentElement;
     const fR = parseInt(parent.dataset.row);
     const fC = parseInt(parent.dataset.col);
     const piece = boardState[fR][fC];
+
+    if (blockDeselectCheckBox.checked && !(
+      (currentTurn === 'white' && piece === piece.toUpperCase()) ||
+      (currentTurn === 'black' && piece === piece.toLowerCase())
+    )) {
+      return;
+    }
 
     if ((currentTurn === 'white' && piece === piece.toUpperCase()) ||
       (currentTurn === 'black' && piece === piece.toLowerCase())) {
