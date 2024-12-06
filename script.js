@@ -628,6 +628,10 @@ const handlePieceClick = (e) => {
   // Check if a piece is already selected
   // console.log(selectedPiece);
   if (selectedPiece !== null) {
+    if (blockDeselectCheckBox.checked) {
+      return;
+    }
+    
     const parent = e.target.parentElement;
     const fR = parseInt(parent.dataset.row);
     const fC = parseInt(parent.dataset.col);
