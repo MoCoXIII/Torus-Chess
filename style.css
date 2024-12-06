@@ -5,6 +5,7 @@ body {
   padding: 0;
   background-color: black;
   color: white;
+  font-variant-emoji: none;
 }
 
 #chessboard {
@@ -107,4 +108,9 @@ body {
 
 .flipped-text {
   transform: rotate(180deg);
+}
+
+.stupid  {
+  visibility: hidden;
+  pointer-events: none;
 }

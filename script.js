@@ -50,6 +50,11 @@ flipTextCheckbox.addEventListener('change', () => {
 
 const blockDeselectCheckbox = document.getElementById('blockDeselectCheckbox');
 
+const freePlayCheckbox = document.getElementById('FreePlay');
+freePlayCheckbox.addEventListener('change', () => {
+  enablePieceSelection();
+});
+
 document.body.addEventListener('click', (e) => {
   if (e.target === document.body && !blockDeselectCheckbox.checked) {
     // Clear highlights and selection
@@ -237,7 +242,7 @@ const isOpponentPiece = (targetSquare, isWhite) => {
 };
 
 const legalMove = (move, pieceIsWhite, attackCheck) => {
-  if (attackCheck > 0) {
+  if (attackCheck > 0 || freePlayCheckbox.checked) {
     return true;
   } else if (attackCheck > -1) {
     attackCheck++;
@@ -635,16 +640,15 @@ const handlePieceClick = (e) => {
 
     if ((currentTurn === 'white' && piece === piece.toUpperCase()) ||
       (currentTurn === 'black' && piece === piece.toLowerCase())) {
+      if (blockDeselectCheckbox.checked) {
+        return;
+      }
       selectedPiece.classList.remove('selected');
       e.target.classList.add('selected');
 
       let possibleMoves = getPossibleMoves(piece, fR, fC, boardState);
       selectedPiece = e.target;
       highlightMoves(possibleMoves);
-      return;
-    }
-
-    if (blockDeselectCheckbox.checked) {
       return;
     }
 
@@ -789,7 +793,7 @@ const enablePieceSelection = () => {
   } else if (totalPossibleMoves.length === 1) {
     let firstLetter = totalPossibleMoves[0][0] === 7 ? 'a' : totalPossibleMoves[0][0] === 6 ? 'b' : totalPossibleMoves[0][0] === 5 ? 'c' : totalPossibleMoves[0][0] === 4 ? 'd' : totalPossibleMoves[0][0] === 3 ? 'e' : totalPossibleMoves[0][0] === 2 ? 'f' : totalPossibleMoves[0][0] === 1 ? 'g' : totalPossibleMoves[0][0] === 0 ? 'h' : totalPossibleMoves[0][0];
     let thirdLetter = totalPossibleMoves[0][2] === 7 ? 'a' : totalPossibleMoves[0][2] === 6 ? 'b' : totalPossibleMoves[0][2] === 5 ? 'c' : totalPossibleMoves[0][2] === 4 ? 'd' : totalPossibleMoves[0][2] === 3 ? 'e' : totalPossibleMoves[0][2] === 2 ? 'f' : totalPossibleMoves[0][2] === 1 ? 'g' : totalPossibleMoves[0][2] === 0 ? 'h' : totalPossibleMoves[0][2];
-    document.getElementById('title').textContent = (firstLetter) + (totalPossibleMoves[0][1]) + (thirdLetter) + (totalPossibleMoves[0][3]) + " Forced";
+    document.getElementById('title').textContent = (firstLetter) + (totalPossibleMoves[0][1] + 1) + (thirdLetter) + (totalPossibleMoves[0][3] + 1) + " Forced";
   } else {
     document.title = "Torus Chess " + totalPossibleMoves.length;
     document.getElementById('title').textContent = "Torus Chess " + totalPossibleMoves.length;
