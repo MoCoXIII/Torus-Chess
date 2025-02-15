@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2024.12.6.16.x';
+document.getElementById('version').textContent = 'Version 0.2025.2.15.14.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -234,6 +234,28 @@ const createBoard = () => {
     }
   }
 };
+
+const xShiftSlider = document.getElementById('xShift');
+const yShiftSlider = document.getElementById('yShift');
+
+xShiftSlider.addEventListener('change', updateBoard);
+yShiftSlider.addEventListener('change', updateBoard);
+
+
+
+function updateBoard() {
+  const xShift = parseInt(xShiftSlider.value);
+  const yShift = parseInt(yShiftSlider.value);
+
+  const squares = document.querySelectorAll('.square');
+
+  for (const square of squares) {
+    const row = parseInt(square.dataset.row) + yShift;
+    const col = parseInt(square.dataset.col) + xShift;
+    square.style.gridRow = (row % 8 + 8) % 8 + 1;
+    square.style.gridColumn = (col % 8 + 8) % 8 + 1;
+  }
+}
 
 const isOpponentPiece = (targetSquare, isWhite) => {
   return targetSquare &&
