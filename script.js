@@ -516,7 +516,11 @@ const getPossibleMoves = (piece, fromRow, fromCol, boardState, attackCheck = -1)
 
     // Continue moving in the same direction
 
-    while (true) {
+    let steps = 0;
+    const maxSteps = 50;
+
+    while (steps < maxSteps) {
+      steps++;
       [newRow, newCol] = newCoords(newRow, dRow, newCol, dCol);
       if (newRow === null) { break; }
       const newTarget = boardState[newRow][newCol];
