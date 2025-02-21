@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2025.2.15.14.x';
+document.getElementById('version').textContent = 'Version 0.2025.2.21.16.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -49,6 +49,100 @@ flipTextCheckbox.addEventListener('change', () => {
 });
 
 const blockDeselectCheckbox = document.getElementById('blockDeselectCheckbox');
+
+
+const enableSideManagementCheckbox = document.getElementById('enableSideManagement');
+enableSideManagementCheckbox.addEventListener('change', () => {
+  if (enableSideManagementCheckbox.checked) {
+    xShiftSlider.value = 0;
+    yShiftSlider.value = 0;
+    document.getElementById('xShift').style.display = 'none';
+    document.querySelector('label[for="xShift"]').style.display = 'none';
+    document.getElementById('yShift').style.display = 'none';
+    document.querySelector('label[for="yShift"]').style.display = 'none';
+    document.querySelector('.sideConfigs').style.display = 'inline-block';
+    updateBoard();
+  } else {
+    document.getElementById('xShift').style.display = 'inline-block';
+    document.querySelector('label[for="xShift"]').style.display = 'inline-block';
+    document.getElementById('yShift').style.display = 'inline-block';
+    document.querySelector('label[for="yShift"]').style.display = 'inline-block';
+    document.querySelector('.sideConfigs').style.display = 'none';
+  }
+});
+
+
+document.querySelector('.sideConfigs').addEventListener('change', (event) => {
+  const leftColor = document.getElementById('leftColorSwitch').value;
+  const rightColor = document.getElementById('rightColorSwitch').value;
+  const topColor = document.getElementById('topColorSwitch').value;
+  const bottomColor = document.getElementById('bottomColorSwitch').value;
+
+  const leftDirection = document.getElementById('leftDirectionSwitch').value;
+  const rightDirection = document.getElementById('rightDirectionSwitch').value;
+  const topDirection = document.getElementById('topDirectionSwitch').value;
+  const bottomDirection = document.getElementById('bottomDirectionSwitch').value;
+
+  const switches = ['leftColorSwitch', 'rightColorSwitch', 'topColorSwitch', 'bottomColorSwitch'];
+
+  const allColors = ['red', 'blue', 'black'];
+
+  // re-add missing color options in each selection box
+  switches.forEach(id => {
+    allColors.forEach(color => {
+      const select = document.getElementById(id);
+      if (!select.querySelector(`option[value="${color}"]`)) {
+        const option = document.createElement('option');
+        option.value = color;
+        option.textContent = color;
+        select.appendChild(option);
+      }
+    })
+  })
+
+
+  const colors = ['red', 'blue'];
+
+  // Check how many sides have a specific color selected
+  colors.forEach(color => {
+    const colorCount = [
+      leftColor,
+      rightColor,
+      topColor,
+      bottomColor
+    ].filter(selectedColor => selectedColor === color).length;
+
+    // If a color is used twice, do not add it to other selection boxes
+    if (colorCount >= 2) {
+      switches.forEach(id => {
+        const select = document.getElementById(id);
+        if (select.value !== color) {
+          select.querySelectorAll(`option[value="${color}"]`).forEach(option => option.remove());
+        }
+      });
+    }
+  });
+
+  updateArrow('left', leftColor, `to ${leftDirection}`);
+  updateArrow('right', rightColor, `to ${rightDirection}`);
+  updateArrow('top', topColor, `to ${topDirection}`);
+  updateArrow('bottom', bottomColor, `to ${bottomDirection}`);
+});
+
+
+function updateArrow(direction, color, gradientDirection) {
+  const arrow = document.querySelector(`.arrow.${direction}`);
+
+  if (!arrow) {
+    console.error(`Arrow with direction "${direction}" not found.`);
+    return;
+  }
+
+  // Update the gradient direction and color
+  arrow.style.background = `repeating-linear-gradient(${gradientDirection}, transparent 0%, ${color} 12.5%)`;
+  // console.log(`Arrow with direction "${direction}" updated with color "${color}" and gradient direction "${gradientDirection}".\n`, arrow, arrow.style.background);
+}
+
 
 const freePlayCheckbox = document.getElementById('FreePlay');
 freePlayCheckbox.addEventListener('change', () => {
@@ -120,7 +214,8 @@ let initialPieces = {
 
 let fenString = "";
 // currentTurn = "black";
-fenString = "pbp2pbp/qr4rk/pp1nn1pp/8/8/PP1NN1PP/QR4RK/PBP2PBP";  // standard Torus-Chess
+// fenString = "pbp2pbp/qr4rk/pp1nn1pp/8/8/PP1NN1PP/QR4RK/PBP2PBP";  // original Torus-Chess
+fenString = "8/N1PPPP1N/2RKQR2/1PBPPBP1/1pbppbp1/2rkqr2/n1pppp1n/8";  // centered Torus-Chess
 // let fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";  // standard Chess
 // let fenString = "8/8/5p2/1R2q1k1/2P5/2B5/1K6/8";  // stupid mode example
 

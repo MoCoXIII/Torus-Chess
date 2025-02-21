@@ -1,15 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Torus Chess</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <div id="version">Version 0</div>
   <h1 id="title">Torus Chess</h1>
-  <div id="chessboard"></div>
+  <div class="chessboard-container">
+    <div id="chessboard"></div>
+    <div class="arrow left"></div>
+    <div class="arrow right"></div>
+    <div class="arrow top"></div>
+    <div class="arrow bottom"></div>
+  </div>
   <div id="turn-indicator">White's Turn</div>
   <!-- <br>
   <label for="defaultPosition">Default Position:</label>
@@ -20,11 +28,69 @@
   </select>
   <br> -->
   <br>
+  <div class="sideConfigs" style="display: none;">
+    <div class="color-switches">
+      <label for="leftColorSwitch">Left Color:</label>
+      <select id="leftColorSwitch">
+        <!-- <option value="red">red</option> -->
+        <option value="blue" selected>blue</option>
+        <option value="black">black</option>
+      </select>
+    
+      <label for="rightColorSwitch">Right Color:</label>
+      <select id="rightColorSwitch">
+        <!-- <option value="red">red</option> -->
+        <option value="blue" selected>blue</option>
+        <option value="black">black</option>
+      </select>
+    
+      <label for="topColorSwitch">Top Color:</label>
+      <select id="topColorSwitch">
+        <option value="red" selected>red</option>
+        <!-- <option value="blue">blue</option> -->
+        <option value="black">black</option>
+      </select>
+    
+      <label for="bottomColorSwitch">Bottom Color:</label>
+      <select id="bottomColorSwitch">
+        <option value="red" selected>red</option>
+        <!-- <option value="blue">blue</option> -->
+        <option value="black">black</option>
+      </select>
+    </div>
+    <div class="direction-switches">
+      <label for="leftDirectionSwitch">Left Direction:</label>
+      <select id="leftDirectionSwitch">
+        <option value="top" selected>top</option>
+        <option value="bottom">bottom</option>
+      </select>
+    
+      <label for="rightDirectionSwitch">Right Direction:</label>
+      <select id="rightDirectionSwitch">
+        <option value="top" selected>top</option>
+        <option value="bottom">bottom</option>
+      </select>
+    
+      <label for="topDirectionSwitch">Top Direction:</label>
+      <select id="topDirectionSwitch">
+        <option value="left">left</option>
+        <option value="right" selected>right</option>
+      </select>
+    
+      <label for="bottomDirectionSwitch">Bottom Direction:</label>
+      <select id="bottomDirectionSwitch">
+        <option value="left">left</option>
+        <option value="right" selected>right</option>
+      </select>
+    </div>
+  </div>
   <label for="xShift">X Shift: </label>
   <input type="range" id="xShift" name="xShift" min="-7" max="7" value="0" />
   <br>
   <label for="yShift">Y Shift: </label>
   <input type="range" id="yShift" name="yShift" min="-7" max="7" value="0" /><br>
+  <input type="checkbox" id="enableSideManagement">
+  <label for="enableSideManagement">Enable Side Management</label><br>
   <br>
   <input type="checkbox" id="flipBoardCheckbox">
   <label for="flipBoardCheckbox">Flip Board</label>
@@ -40,7 +106,9 @@
   <label for="obvious">Make Movable Pieces More Obvious</label>
   <br>
   <input type="checkbox" class="stupid" id="stupid">
-  <label class="stupid" for="stupid">Stupid Mode (allows endangering your king when the opponents' attacking pieces are pinned)</label>
+  <label class="stupid" for="stupid">Stupid Mode (allows endangering your king when the opponents' attacking pieces are
+    pinned)</label>
   <script src="script.js"></script>
 </body>
+
 </html>
