@@ -1,4 +1,4 @@
-document.getElementById('version').textContent = 'Version 0.2025.2.21.16.x';
+document.getElementById('version').textContent = 'Version 0.2025.2.21.23.x';
 
 window.addEventListener('load', () => {
   const windowSize = window.innerWidth < window.innerHeight ? window.innerWidth : window.innerHeight;
@@ -100,7 +100,6 @@ document.querySelector('.sideConfigs').addEventListener('change', (event) => {
     })
   })
 
-
   const colors = ['red', 'blue'];
 
   // Check how many sides have a specific color selected
@@ -127,8 +126,19 @@ document.querySelector('.sideConfigs').addEventListener('change', (event) => {
   updateArrow('right', rightColor, `to ${rightDirection}`);
   updateArrow('top', topColor, `to ${topDirection}`);
   updateArrow('bottom', bottomColor, `to ${bottomDirection}`);
+
+  enablePieceSelection();
 });
 
+const topColor = document.getElementById('topColorSwitch');
+const bottomColor = document.getElementById('bottomColorSwitch');
+const leftColor = document.getElementById('leftColorSwitch');
+const rightColor = document.getElementById('rightColorSwitch');
+
+const topDirection = document.getElementById('topDirectionSwitch');
+const bottomDirection = document.getElementById('bottomDirectionSwitch');
+const leftDirection = document.getElementById('leftDirectionSwitch');
+const rightDirection = document.getElementById('rightDirectionSwitch');
 
 function updateArrow(direction, color, gradientDirection) {
   const arrow = document.querySelector(`.arrow.${direction}`);
@@ -400,39 +410,40 @@ const getPossibleMoves = (piece, fromRow, fromCol, boardState, attackCheck = -1)
     const startRow = isWhite ? 6 : 1; // Starting row for pawns
     fromCol = parseInt(fromCol);
 
-    let fr_d = (fromRow + direction + 8) % 8;
-    let fc_1 = (fromCol - 1 + 8) % 8;
-    let fc_2 = (fromCol + 1 + 8) % 8;
+    let forward = pawn_forward(direction);
+    // let double_forward = [fr_dd, fromCol];
+    let capture_left = pawn_capture_left(direction);
+    let capture_right = pawn_capture_right(direction);
 
     // Regular move
-    // console.log(boardState, fr_d, fromCol);
-    if (!boardState[fr_d][fromCol]) {
-      const possibleMove = [fromRow, fromCol, fr_d, fromCol];
+    // console.log(boardState, fr_d, fromCol, forward);
+    if (forward[0] !== null && !boardState[forward[0]][forward[1]]) {
+      const possibleMove = [fromRow, fromCol, forward[0], forward[1]];
       if (legalMove(possibleMove, isWhite, attackCheck = attackCheck)) { moves.push(possibleMove); };
 
-      // Double move from start position
-      if (fromRow === startRow && !boardState[fromRow + 2 * direction][fromCol]) {
-        const possibleMove = [fromRow, fromCol, fromRow + 2 * direction, fromCol]
-        if (legalMove(possibleMove, isWhite, attackCheck = attackCheck)) { moves.push(possibleMove); };
-      }
+      // Double move from start position, currently disabled (no fixed double jump line a.k.a. startRow in later versions)
+      // if (fromRow === startRow && !boardState[double_forward[0]][double_forward[1]]) {
+      //   const possibleMove = [fromRow, fromCol, double_forward[0], double_forward[1]];
+      //   if (legalMove(possibleMove, isWhite, attackCheck = attackCheck)) { moves.push(possibleMove); };
+      // }
     }
 
     // Captures (ensure it's an opponent's piece)
-    if (
-      boardState[fr_d][fc_1] && // Piece to the left
-      (boardState[fr_d][fc_1] !== null &&
-        ((boardState[fr_d][fc_1].toUpperCase() === boardState[fr_d][fc_1]) !== isWhite))
+    if (capture_left[0] !== null &&
+      boardState[capture_left[0]][capture_left[1]] && // Piece to the left
+      (boardState[capture_left[0]][capture_left[1]] !== null &&
+        ((boardState[capture_left[0]][capture_left[1]].toUpperCase() === boardState[capture_left[0]][capture_left[1]]) !== isWhite))
     ) {
-      const possibleMove = [fromRow, fromCol, fr_d, fc_1]
+      const possibleMove = [fromRow, fromCol, capture_left[0], capture_left[1]]
       if (legalMove(possibleMove, isWhite, attackCheck = attackCheck)) { moves.push(possibleMove); };
     }
 
-    if (
-      boardState[fr_d][fc_2] && // Piece to the right
-      (boardState[fr_d][fc_2] !== null &&
-        ((boardState[fr_d][fc_2].toUpperCase() === boardState[fr_d][fc_2]) !== isWhite))
+    if (capture_right[0] !== null &&
+      boardState[capture_right[0]][capture_right[1]] && // Piece to the right
+      (boardState[capture_right[0]][capture_right[1]] !== null &&
+        ((boardState[capture_right[0]][capture_right[1]].toUpperCase() === boardState[capture_right[0]][capture_right[1]]) !== isWhite))
     ) {
-      const possibleMove = [fromRow, fromCol, fr_d, fc_2]
+      const possibleMove = [fromRow, fromCol, capture_right[0], capture_right[1]]
       if (legalMove(possibleMove, isWhite, attackCheck = attackCheck)) { moves.push(possibleMove); };
     }
 
@@ -506,21 +517,21 @@ const getPossibleMoves = (piece, fromRow, fromCol, boardState, attackCheck = -1)
     // Continue moving in the same direction
 
     while (true) {
-      newRow = (newRow + dRow + 8) % 8;
-      newCol = (newCol + dCol + 8) % 8;
+      [newRow, newCol] = newCoords(newRow, dRow, newCol, dCol);
+      if (newRow === null) { break; }
       const newTarget = boardState[newRow][newCol];
 
       if (newTarget) {
         if ((piece.toUpperCase() === piece && newTarget.toUpperCase() === newTarget) || (piece.toLowerCase() === piece && newTarget.toLowerCase() === newTarget)) {
           break;
         } else {
-          const possibleMove = [fromRow, fromCol, newRow, newCol]
+          const possibleMove = [fromRow, fromCol, newRow, newCol];
           if (legalMove(possibleMove, isWhite, attackCheck = attackCheck)) { moves.push(possibleMove); };
           break;
         };
       }
 
-      const possibleMove = [fromRow, fromCol, newRow, newCol]
+      const possibleMove = [fromRow, fromCol, newRow, newCol];
       if (legalMove(possibleMove, isWhite, attackCheck = attackCheck)) { moves.push(possibleMove); };
       if (pieceType === 'k' || pieceType === 'n') {
         break;
@@ -529,7 +540,156 @@ const getPossibleMoves = (piece, fromRow, fromCol, boardState, attackCheck = -1)
   }
 
   return moves;
+
+  function newCoords(newRow, dRow, newCol, dCol) {
+    let row = newRow + dRow;
+    let col = newCol + dCol;
+    [row, col] = rowEval(row, col);
+    [row, col] = colEval(row, col);
+    [row, col] = rowEval(row, col);
+    [row, col] = colEval(row, col);
+
+    return [row, col];
+  }
+
+  function pawn_capture_right(direction) {
+    let row = fromRow + direction;
+    let col = fromCol + 1;
+    [row, col] = rowEval(row, col);
+    [row, col] = colEval(row, col);
+
+    return [row, col];
+  }
+
+  function pawn_capture_left(direction) {
+    let row = fromRow + direction;
+    let col = fromCol - 1;
+    [row, col] = rowEval(row, col);
+    [row, col] = colEval(row, col);
+
+    return [row, col];
+  }
+
+  function pawn_forward(direction) {
+    let row = fromRow + direction;
+    let col = fromCol;
+    [row, col] = rowEval(row, col, direction);
+
+    return [row, col];
+  }
 };
+
+function rowEval(row, col) {
+  if (row > 7) {
+    if (topColor.value === 'black') {
+      [row, col] = [null, null];
+    } else if (topColor.value === bottomColor.value) {
+      row = row % 8;
+      if ((topDirection.value === 'right') === (bottomDirection.value === 'right')) {
+        col = col;
+      } else {
+        col = 7 - col;
+      }
+    } else if (topColor.value === leftColor.value) {
+      if ((topDirection.value === 'right') === (leftDirection.value === 'top')) {
+        [row, col] = [col, row];
+      } else {
+        [row, col] = [7 - row, 7 - col];
+      }
+    } else if (topColor.value === rightColor.value) {
+      if ((topDirection.value === 'right') === (rightDirection.value === 'top')) {
+        [row, col] = [7 - row, col];
+      } else {
+        [row, col] = [col, 7 - row];
+      }
+    } else {
+      [row, col] = [null, null];
+    }
+  } else if (row < 0) {
+    if (bottomColor.value === 'black') {
+      [row, col] = [null, null];
+    } else if (bottomColor.value === topColor.value) {
+      row = row + 8;
+      if ((bottomDirection.value === 'right') === (topDirection.value === 'right')) {
+        col = col;
+      } else {
+        col = 7 - col;
+      }
+    } else if (bottomColor.value === leftColor.value) {
+      if ((bottomDirection.value === 'right') === (leftDirection.value === 'top')) {
+        [row, col] = [7 - col, 7 - row];
+      } else {
+        [row, col] = [row, col];
+      }
+    } else if (bottomColor.value === rightColor.value) {
+      if ((bottomDirection.value === 'right') === (rightDirection.value === 'top')) {
+        [row, col] = [row, 7 - col];
+      } else {
+        [row, col] = [col, row];
+      }
+    }
+  } else {
+    row = row;
+    col = col;
+  }
+  return [row, col];
+}
+
+function colEval(row, col) {
+  if (col > 7) {
+    if (rightColor.value === 'black') {
+      [row, col] = [null, null];
+    } else if (rightColor.value === leftColor.value) {
+      col = col % 8;
+      if ((rightDirection.value === 'top') === (leftDirection.value === 'top')) {
+        row = row;
+      } else {
+        row = 7 - row;
+      }
+    } else if (rightColor.value === topColor.value) {
+      if ((rightDirection.value === 'top') === (topDirection.value === 'right')) {
+        [row, col] = [7 - row, 7 - col];
+      } else {
+        [row, col] = [7 - col, row];
+      }
+    } else if (rightColor.value === bottomColor.value) {
+      if ((rightDirection.value === 'top') === (bottomDirection.value === 'right')) {
+        [row, col] = [col, 7 - row];
+      } else {
+        [row, col] = [7 - row, col];
+      }
+    } else {
+      [row, col] = [null, null];
+    }
+  } else if (col < 0) {
+    if (leftColor.value === 'black') {
+      [row, col] = [null, null];
+    } else if (leftColor.value === rightColor.value) {
+      col = col + 8;
+      if ((leftDirection.value === 'top') === (rightDirection.value === 'top')) {
+        row = row;
+      } else {
+        row = 7 - row;
+      }
+    } else if (leftColor.value === bottomColor.value) {
+      if ((leftDirection.value === 'top') === (bottomDirection.value === 'right')) {
+        [row, col] = [7 - col, 7 - row];
+      } else {
+        [row, col] = [7 - col, row];
+      }
+    } else if (leftColor.value === topColor.value) {
+      if ((leftDirection.value === 'top') === (topDirection.value === 'right')) {
+        [row, col] = [col, 7 - row];
+      } else {
+        [row, col] = [col, row];
+      }
+    }
+  } else {
+    row = row;
+    col = col;
+  }
+  return [row, col];
+}
 
 function updatePieceClasses() {
   const pieces = document.querySelectorAll('.piece');
